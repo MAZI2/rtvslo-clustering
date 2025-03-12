@@ -1,0 +1,18 @@
+__pycache__/
+.ipynb_checkpoints/
+
+# Editor files
+.idea
+.idea/*
+*~
+.project
+.pydevproject
+.settings/*
+.DS_Store
+
+# Windows temp files
+Thumbs.db
+
+# data files
+articles.yaml
+articles.yaml.zip
