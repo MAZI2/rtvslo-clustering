@@ -1,0 +1,41 @@
+Initial embedding: Use SBERT embeddings (paraphrase-multilingual-mpnet-base-v2).
+---
+from sklearn.metrics import silhouette_score
+
+silhouette_tf_idf = silhouette_score(umap_tf_idf, cluster_labels_tf_idf)
+silhouette_sbert = silhouette_score(umap_sbert, cluster_labels_sbert)
+
+from sklearn.metrics import davies_bouldin_score
+
+db_index_tf_idf = davies_bouldin_score(umap_tf_idf, cluster_labels_tf_idf)
+db_index_sbert = davies_bouldin_score(umap_sbert, cluster_labels_sbert)
+!!!!
+ Qualitative / Visual evaluation (key for interpretability):
+Visual clarity of groups: Which embedding approach provides more intuitive, well-separated clusters on the UMAP 2D plot?
+Interpretability: After clustering, inspect top terms (via TF-IDF within clusters) to qualitatively evaluate if clusters make sense thematically or semantically.
+Human-in-the-loop check:
+Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
+
+1. Compute Embeddings:
+TF-IDF embeddings → Sparse, high-dimensional vectors.
+SBERT embeddings → Dense, semantic vectors.
+2. Project Both Using UMAP:
+Use identical UMAP parameters for both embeddings (e.g., n_neighbors=15, min_dist=0.1, metric='cosine' for consistency).
+3. Evaluate and Compare:
+Visual inspection: Check which method produces clearer, visually meaningful clusters.
+Cluster evaluation metrics:
+Silhouette Score: Measures how well separated clusters are.
+Davies-Bouldin Index: Evaluates cluster compactness and separation.
+Semantic/interpretability evaluation: Check how easy it is to interpret clusters.
+
+----
+
+To achieve explainability comparable to TF-IDF:
+
+Use SBERT embeddings to cluster semantically meaningful groups.
+Then apply TF-IDF or KeyBERT keyword extraction to each cluster independently, gaining TF-IDF-like interpretability at the end.
+
+-----
+t-sne vs umap?
+---------
+also draw and compare extracted labels
