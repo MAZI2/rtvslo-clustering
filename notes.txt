@@ -131,27 +131,8 @@ Would you like me to wrap this random vs. label NPMI test into a reusable functi
 
 Maybe recursive clustering
 
+WORKS umap to 50D -> noralize(cosine dist) -> hbdscan 
+compare to
+umap to 2D -> hbdscan
 
-
-3. Try UMAP + HDBSCAN (2-step)
-Instead of clustering directly on 768D SBERT embeddings, project to ~50D with UMAP:
-
-import umap
-
-umap_reducer = umap.UMAP(n_components=50, metric='cosine', random_state=42)
-reduced = umap_reducer.fit_transform(sbert_embeddings)
-
-# Then cluster
-clusterer = hdbscan.HDBSCAN(min_cluster_size=30, min_samples=10)
-clusters = clusterer.fit_predict(reduced)
-✅ UMAP helps spread out the space and improve density contrast.
-
-✅ 4. Normalize + cluster with cosine distance
-If you haven't yet, normalize the SBERT vectors and use cosine distance (more sensitive to direction, less to magnitude):
-
-from sklearn.preprocessing import normalize
-
-normalized = normalize(sbert_embeddings, norm='l2')
-
-clusterer = hdbscan.HDBSCAN(min_cluster_size=30, min_samples=10, metric='euclidean')
-clusters = clusterer.fit_predict(normalized)
+Test integrity when using random, cluster and knn cluster corr
