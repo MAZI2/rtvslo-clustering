@@ -16,3 +16,6 @@ Thumbs.db
 # data files
 articles.yaml
 articles.yaml.zip
+
+sbert_umap.npy
+tfidf_umap.npy

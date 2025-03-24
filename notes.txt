@@ -39,3 +39,119 @@ Then apply TF-IDF or KeyBERT keyword extraction to each cluster independently, g
 t-sne vs umap?
 ---------
 also draw and compare extracted labels
+---------
+lematize?
+
+---------
+tune tfidf
+
+-------
+create clusters on embeddings not on umap projections
+
+
+
+You're totally right to think this through carefully — if URL topic labels are meaningful, they should definitely group articles better than random. So getting an average NPMI of -0.0776 for URL topics might seem surprisingly low.
+
+Let’s dig deeper into why that’s happening, and how you can confirm that the labels are still better than random, even if clusters are better.
+
+✅ What could cause low NPMI on meaningful labels?
+
+📉 1. Small group sizes or highly uneven label distribution
+NPMI depends on having enough co-occurrence signal.
+If some labels only have 2–3 articles, the keywords are too sparse → unstable or negative NPMI.
+✅ Fix:
+
+Skip small groups:
+
+if len(group_texts) < 5:
+    continue
+🌀 2. High lexical variety within URL topics
+Even if topics like "slovenija/preberite-tudi" are meaningful, the articles may:
+
+Cover broad subtopics (e.g. politics, labor, society),
+Use varied vocab (diluting co-occurrence),
+Contain common words, reducing informativeness.
+So although URL labels group by editorial category, they may not be lexically tight enough to produce good NPMI.
+
+🤖 3. Tokenization, stopword handling, and preprocessing
+If you're using raw word counts with minimal preprocessing:
+
+NPMI might reflect co-occurrence of non-thematic words (like verbs, connectors).
+Or you may have low overlap between documents because of inconsistent text structure (short leads, etc).
+✅ Fixes:
+
+Use lemmatization (not just tokenization).
+Apply custom Slovene stopword list.
+Lowercase, remove punctuation, etc.
+🧪 4. Random still possible to beat bad labels
+If the label groups are too noisy or small, then random samples of size ~5 may coincidentally have more co-occurring words (especially common ones).
+
+✅ Test it: Compare to true random grouping
+
+Let’s prove it — create random groups the same size as your URL topic groups and compare NPMI.
+
+✨ Script Snippet:
+def generate_random_groups(n_items, group_sizes):
+    indices = np.random.permutation(n_items)
+    groups = {}
+    start = 0
+    for i, size in enumerate(group_sizes):
+        groups[f"rand_{i}"] = list(indices[start:start+size])
+        start += size
+    return groups
+
+# Get URL label group sizes
+label_group_sizes = [len(v) for v in label_groups.values() if len(v) >= 5]
+
+# Generate random groups with same sizes
+random_groups = generate_random_groups(len(texts), label_group_sizes)
+
+# Compute NPMI for random groups
+npmi_random = compute_npmi(random_groups, texts, stopwords=slovene_stopwords)
+
+# Print comparison
+print(f"Avg NPMI - Random: {np.mean(list(npmi_random.values())):.4f}")
+print(f"Avg NPMI - URL Topics: {np.mean(list(npmi_labels.values())):.4f}")
+🔍 Outcome:
+
+If URL topics still beat random → ✅ You’re right.
+If random beats URL labels → something's wrong with labels, text quality, or preprocessing.
+✅ Summary
+
+Observation	Possible Cause	Fix/Check
+URL labels give low NPMI	Small groups, varied content, weak keyword overlap	Filter small groups, lemmatize, clean
+Clusters beat URL labels	HDBSCAN found tighter semantic groups	This is OK — it shows your pipeline adds value
+Random matches URL NPMI	Label noise, sparse keywords	Run comparison with controlled random groups
+Would you like me to wrap this random vs. label NPMI test into a reusable function and print all three side-by-side?
+
+
+
+
+
+
+Maybe recursive clustering
+
+
+
+3. Try UMAP + HDBSCAN (2-step)
+Instead of clustering directly on 768D SBERT embeddings, project to ~50D with UMAP:
+
+import umap
+
+umap_reducer = umap.UMAP(n_components=50, metric='cosine', random_state=42)
+reduced = umap_reducer.fit_transform(sbert_embeddings)
+
+# Then cluster
+clusterer = hdbscan.HDBSCAN(min_cluster_size=30, min_samples=10)
+clusters = clusterer.fit_predict(reduced)
+✅ UMAP helps spread out the space and improve density contrast.
+
+✅ 4. Normalize + cluster with cosine distance
+If you haven't yet, normalize the SBERT vectors and use cosine distance (more sensitive to direction, less to magnitude):
+
+from sklearn.preprocessing import normalize
+
+normalized = normalize(sbert_embeddings, norm='l2')
+
+clusterer = hdbscan.HDBSCAN(min_cluster_size=30, min_samples=10, metric='euclidean')
+clusters = clusterer.fit_predict(normalized)
