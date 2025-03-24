@@ -136,3 +136,5 @@ compare to
 umap to 2D -> hbdscan
 
 Test integrity when using random, cluster and knn cluster corr
+
+preprocess for without adjectives
