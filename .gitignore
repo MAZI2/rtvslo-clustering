@@ -22,3 +22,8 @@ tfidf_umap.npy
 sbert_clusters_full.npy
 preprocessed_combined.jsonl
 tfidf_umap50d.npy
+sbert_clusters.npy
+sbert_umap_25d.npy
+tfidf_clusters.npy
+tfidf_umap_2d.npy
+true_labels.npy

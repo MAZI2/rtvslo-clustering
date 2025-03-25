@@ -1,76 +1,44 @@
-Initial embedding: Use SBERT embeddings (paraphrase-multilingual-mpnet-base-v2).",
 ---
-from sklearn.metrics import silhouette_score
-
-silhouette_tf_idf = silhouette_score(umap_tf_idf, cluster_labels_tf_idf)
-silhouette_sbert = silhouette_score(umap_sbert, cluster_labels_sbert)
-
-from sklearn.metrics import davies_bouldin_score
-
-db_index_tf_idf = davies_bouldin_score(umap_tf_idf, cluster_labels_tf_idf)
-db_index_sbert = davies_bouldin_score(umap_sbert, cluster_labels_sbert)
-!!!!
- Qualitative / Visual evaluation (key for interpretability):
-Visual clarity of groups: Which embedding approach provides more intuitive, well-separated clusters on the UMAP 2D plot?
-Interpretability: After clustering, inspect top terms (via TF-IDF within clusters) to qualitatively evaluate if clusters make sense thematically or semantically.
-Human-in-the-loop check:
-Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
-
+D Interpretability: After clustering, inspect top terms (via TF-IDF within clusters) to qualitatively evaluate if clusters make sense thematically or semantically.
+D Human-in-the-loop check:
+    Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
+---------
 1. Compute Embeddings:
 TF-IDF embeddings → Sparse, high-dimensional vectors.
 SBERT embeddings → Dense, semantic vectors.
 2. Project Both Using UMAP:
-Use identical UMAP parameters for both embeddings (e.g., n_neighbors=15, min_dist=0.1, metric='cosine' for consistency).
-3. Evaluate and Compare:
-Visual inspection: Check which method produces clearer, visually meaningful clusters.
-Cluster evaluation metrics:
-Silhouette Score: Measures how well separated clusters are.
-Davies-Bouldin Index: Evaluates cluster compactness and separation.
-Semantic/interpretability evaluation: Check how easy it is to interpret clusters.
-
+TODO: Use identical UMAP parameters for both embeddings (e.g., n_neighbors=15, min_dist=0.1, metric='cosine' for consistency).
 ----
-
-To achieve explainability comparable to TF-IDF:
-
-Use SBERT embeddings to cluster semantically meaningful groups.
-Then apply TF-IDF or KeyBERT keyword extraction to each cluster independently, gaining TF-IDF-like interpretability at the end.
-
------
+D To achieve explainability comparable to TF-IDF:
+    Use SBERT embeddings to cluster semantically meaningful groups.
+    Then apply TF-IDF or KeyBERT keyword extraction to each cluster independently, gaining TF-IDF-like interpretability at the end.
 D t-sne vs umap?
 D also draw and compare extracted labels
 D lematize?
 D tune tfidf
 D create clusters on embeddings not on umap projections
 ------
+TODO: NPMI on true_labels
+    ✅ What could cause low NPMI on meaningful labels?
 
+    📉 1. Small group sizes or highly uneven label distribution
+    NPMI depends on having enough co-occurrence signal.
+    If some labels only have 2–3 articles, the keywords are too sparse → unstable or negative NPMI.
+    ✅ Fix:
 
+    Skip small groups:
+    TODO: check
+    if len(group_texts) < 5:
+        continue
+    🌀 2. High lexical variety within URL topics
+    Even if topics like "slovenija/preberite-tudi" are meaningful, the articles may:
 
-You're totally right to think this through carefully — if URL topic labels are meaningful, they should definitely group articles better than random. So getting an average NPMI of -0.0776 for URL topics might seem surprisingly low.
+    Cover broad subtopics (e.g. politics, labor, society),
+    Use varied vocab (diluting co-occurrence),
+    Contain common words, reducing informativeness.
+    So although URL labels group by editorial category, they may not be lexically tight enough to produce good NPMI.
 
-Let’s dig deeper into why that’s happening, and how you can confirm that the labels are still better than random, even if clusters are better.
-
-✅ What could cause low NPMI on meaningful labels?
-
-📉 1. Small group sizes or highly uneven label distribution
-NPMI depends on having enough co-occurrence signal.
-If some labels only have 2–3 articles, the keywords are too sparse → unstable or negative NPMI.
-✅ Fix:
-
-Skip small groups:
-
-if len(group_texts) < 5:
-    continue
-🌀 2. High lexical variety within URL topics
-Even if topics like "slovenija/preberite-tudi" are meaningful, the articles may:
-
-Cover broad subtopics (e.g. politics, labor, society),
-Use varied vocab (diluting co-occurrence),
-Contain common words, reducing informativeness.
-So although URL labels group by editorial category, they may not be lexically tight enough to produce good NPMI.
-
-🤖 3. Tokenization, stopword handling, and preprocessing
-If you're using raw word counts with minimal preprocessing:
-
+TODO: NPMI -----------
 NPMI might reflect co-occurrence of non-thematic words (like verbs, connectors).
 Or you may have low overlap between documents because of inconsistent text structure (short leads, etc).
 ✅ Fixes:
@@ -78,71 +46,15 @@ Or you may have low overlap between documents because of inconsistent text struc
 Use lemmatization (not just tokenization).
 Apply custom Slovene stopword list.
 Lowercase, remove punctuation, etc.
-🧪 4. Random still possible to beat bad labels
-If the label groups are too noisy or small, then random samples of size ~5 may coincidentally have more co-occurring words (especially common ones).
 
-✅ Test it: Compare to true random grouping
-
-Let’s prove it — create random groups the same size as your URL topic groups and compare NPMI.
-
-✨ Script Snippet:
-def generate_random_groups(n_items, group_sizes):
-    indices = np.random.permutation(n_items)
-    groups = {}
-    start = 0
-    for i, size in enumerate(group_sizes):
-        groups[f"rand_{i}"] = list(indices[start:start+size])
-        start += size
-    return groups
-
-# Get URL label group sizes
-label_group_sizes = [len(v) for v in label_groups.values() if len(v) >= 5]
-
-# Generate random groups with same sizes
-random_groups = generate_random_groups(len(texts), label_group_sizes)
-
-# Compute NPMI for random groups
-npmi_random = compute_npmi(random_groups, texts, stopwords=slovene_stopwords)
-
-# Print comparison
-print(f"Avg NPMI - Random: {np.mean(list(npmi_random.values())):.4f}")
-print(f"Avg NPMI - URL Topics: {np.mean(list(npmi_labels.values())):.4f}")
-🔍 Outcome:
-
-If URL topics still beat random → ✅ You’re right.
-If random beats URL labels → something's wrong with labels, text quality, or preprocessing.
-✅ Summary
-
-Observation	Possible Cause	Fix/Check
-URL labels give low NPMI	Small groups, varied content, weak keyword overlap	Filter small groups, lemmatize, clean
-Clusters beat URL labels	HDBSCAN found tighter semantic groups	This is OK — it shows your pipeline adds value
-Random matches URL NPMI	Label noise, sparse keywords	Run comparison with controlled random groups
-Would you like me to wrap this random vs. label NPMI test into a reusable function and print all three side-by-side?
-
-
-
-
-
-
-Maybe recursive clustering
-
+-------- TODO: should I normalize or to 50D?
 WORKS umap to 50D -> noralize(cosine dist) -> hbdscan 
 compare to
 umap to 2D -> hbdscan
 
-Test integrity when using random, cluster and knn cluster corr
+TODO: is there upper bound other than time for clusterin ... should you reduce dims at all?
 
-preprocess for without adjectives
-
-
-
-
-
-
-
-
-ntic alignment using embeddings, and it can give you a more direct, model-based evaluation of clustering quality — especially when traditional clustering metrics fail (like silhouette score on 2D projections).
-
+TODO: should i use for tfidf? embedding-based --- for sbert/tfidf vs true_labels
 ✅ Why Use Embedding-Based Evaluation?
 Traditional metrics (e.g., Silhouette, Davies-Bouldin) rely on distances between points and fail when:
 
@@ -153,60 +65,16 @@ Using embeddings allows you to evaluate semantic coherence and separation indepe
 
 ✅ Options for Embedding-Based Evaluation
 1. Intra-cluster vs Inter-cluster Cosine Similarity
-
-Measure how similar articles in a cluster are to each other (intra)
-Compare to similarity between articles in different clusters (inter)
-The higher the gap, the better
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-
-def average_intra_inter_similarity(embeddings, labels):
-    unique_clusters = np.unique(labels[labels >= 0])
-    intra_sims = []
-    inter_sims = []
-
-    for cluster in unique_clusters:
-        idx = np.where(labels == cluster)[0]
-        cluster_embeds = embeddings[idx]
-        if len(cluster_embeds) < 2:
-            continue
-
-        sim_matrix = cosine_similarity(cluster_embeds)
-        intra_sims.append(np.mean(sim_matrix[np.triu_indices_from(sim_matrix, k=1)]))
-
-        # Compare to a few random other clusters
-        other_idx = np.where(labels != cluster)[0]
-        sampled_other = np.random.choice(other_idx, size=min(len(idx), len(other_idx)), replace=False)
-        inter_sim = cosine_similarity(cluster_embeds, embeddings[sampled_other])
-        inter_sims.append(np.mean(inter_sim))
-
-    return np.mean(intra_sims), np.mean(inter_sims)
 2. Cluster Centroid Cosine Distances
-
-Compute each cluster's centroid
-Measure:
-How close points are to their centroid (cohesion)
-How far centroids are from each other (separation)
-✅ Why It Might Be Better
-Works directly on SBERT or BERT embeddings (semantic!)
-Not distorted by dimensionality reduction (e.g., UMAP or t-SNE)
-Unsupervised — you don't need ground-truth labels
-Doesn’t assume spherical geometry like Silhouette
+    ✅ Why It Might Be Better
+    Works directly on SBERT or BERT embeddings (semantic!)
+    Not distorted by dimensionality reduction (e.g., UMAP or t-SNE)
+    Unsupervised — you don't need ground-truth labels
+    Doesn’t assume spherical geometry like Silhouette
 ✅ Alternative: NMI or ARI with Ground Truth Labels
-If you have something like URL-based topics, you can also compute:
+    If you have something like URL-based topics, you can also compute:
 
-from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
-
-nmi = normalized_mutual_info_score(true_labels, predicted_clusters)
-ari = adjusted_rand_score(true_labels, predicted_clusters)
-But embeddings give you a more model-based semantic check.
-
-Would you like me to help implement this for your current SBERT setup?
-
-You said:
-i think that you once suggested the word coocurrance or something like that to measure semantics. How does that compare
-ChatGPT said:
-Yes, you’re right — earlier I suggested using word co-occurrence-based metrics, like PMI/NPMI, to evaluate the semantic coherence of clusters. Let’s compare the two approaches in depth:
+TODO: i have ground truth but how should i use embedding similarity for comparing which one is better sbert or tsne
 
 ⚖️ Comparison: Word Co-occurrence (PMI/NPMI) vs Embedding Similarity
 Aspect	PMI/NPMI (Co-occurrence)	Embedding-based (SBERT etc.)
@@ -225,34 +93,15 @@ Cons	- Sensitive to corpus size
 - Can fail for mixed-topic clusters
 Output	Coherence scores per cluster (e.g. NPMI)	Similarity stats per cluster (intra/inter)
 ✅ When to Use Each
-Use PMI/NPMI if:
-
-You care about word-level coherence
-You want to interpret what a cluster is about
-You’re working with many short docs (titles, leads)
-Use Embedding-based similarity if:
-
-You want to test semantic tightness
-Your documents are longer or richer (e.g., paragraphs)
-You’re clustering based on embeddings (SBERT etc.)
-🧠 Best Practice: Use Both
-Many NLP papers evaluate topic clusters using both:
-
 NPMI: For keyword coherence
 Cosine similarity: For semantic tightness in embedding space
-Together, they give a well-rounded view:
+    Together, they give a well-rounded view:
 
-Do words co-occur?
-Are texts semantically similar?
-Do generated cluster labels reflect the content?
-Would you like a script that outputs both NPMI and embedding coherence for your clusters?
+    Do words co-occur?
+    Are texts semantically similar?
+    Do generated cluster labels reflect the content?
 
-You said:
-so can you use pmi/npmi to extract meaningful words for cluster?
-ChatGPT said:
-Yes — you can absolutely use PMI/NPMI to extract meaningful keywords for a cluster. In fact, this is one of the original purposes of those metrics in topic modeling!
-
-✅ How PMI/NPMI Helps for Keyword Extraction
+TODO: pmi/npmi keyword extraction ------
 Instead of just picking top TF-IDF words, you rank combinations of words that co-occur more than expected. That way, you get:
 
 Thematically consistent words
@@ -261,25 +110,6 @@ Words that tend to appear together in the same context
 ✅ Example Use: Gensim’s CoherenceModel
 You can do something like:
 
-from gensim.corpora import Dictionary
-from gensim.models.coherencemodel import CoherenceModel
-
-def extract_coherent_keywords(token_lists, top_n=10):
-    dictionary = Dictionary(token_lists)
-    corpus = [dictionary.doc2bow(text) for text in token_lists]
-
-    cm = CoherenceModel(
-        texts=token_lists,
-        corpus=corpus,
-        dictionary=dictionary,
-        coherence='c_npmi',
-        topn=top_n
-    )
-
-    # This will rank words by their NPMI-based coherence
-    return cm.get_coherence_per_topic()
-This is typically used after clustering documents, where each cluster is treated like a "topic".
-
 ✅ Compared to TF-IDF
 Feature	TF-IDF	PMI/NPMI
 Focus	Individual word frequency	Word pairs and co-occurrence
@@ -287,65 +117,11 @@ Pros	Simple, fast	Captures topical coherence
 Common artifacts	Words like “dejala”, “leto”, etc.	Fewer generic terms
 Interpretability	Medium	High (shows word relationships)
 Language dependent?	Somewhat	Less so — works on token co-occurrence
-🧠 Best Strategy
+🧠 Best Strategy TODO
 Use Stanza-preprocessed token lists (e.g. NOUN, PROPN, ADJ only)
 For each cluster, treat the collection of docs as a “topic”
 Run CoherenceModel with coherence='c_npmi' to extract top words
 Would you like a full working example that does this per cluster?
-
-You said:
-for explainability is there any reason other than speed, to use methods other than llm or bert embeddings and summarization for clusters, if i have whole articles embedded and can also embed only leads if i would need to to reduce the load
-ChatGPT said:
-That’s a great and forward-thinking question — and the short answer is:
-
-If you're already using LLMs or BERT-style embeddings + summarization, you’re near the best you can do in terms of explainability — especially if you can afford the compute.
-But here's the nuanced breakdown:
-✅ When LLMs/BERT Embeddings & Summarization Win
-
-They are ideal when you want:
-
-Semantic depth: They capture context, tone, and meaning
-Natural summaries: You can generate human-readable cluster labels
-Consistency: They behave similarly across documents
-Multilingual support: Especially useful for Slovene
-Explainability via sentence: Not just top keywords, but a sentence that can describe a whole group
-So when might other methods still make sense?
-Case	Alternative Might Be Better?	Why
-Compute-limited environments	Yes	TF-IDF is fast & light
-Need transparent scoring	Yes	TF-IDF & NPMI are explicitly ranked
-Keyword interpretability is preferred	Sometimes	You might want to show top-N words, not just a sentence
-Auditability / reproducibility	Yes	Easier to explain to non-technical users
-Short documents (titles only)	Maybe	Keywords might perform just as well as LLMs
-Example: Combine the Best of Both
-A very explainable pipeline might look like:
-
-Cluster documents (with SBERT or similar)
-Extract top NPMI keywords per cluster
-Generate sentence summaries using an LLM on those keywords
-Optionally: Add a few representative article titles to each cluster
-Display all in a UI: sentence + keywords + example headlines
-TL;DR
-If:
-
-You can run mBART or Flan-T5
-You have document-level embeddings
-You’re using keyword-based summaries only as a fallback
-Then you’re already in the best explainability zone — and don’t need simpler alternatives unless for speed, audience clarity, or audits.
-
-Let me know if you'd like to generate cluster cards or summaries that combine:
-
-Sentence label
-Top keywords
-Most representative article title(s) (e.g., closest to cluster centroid)
-
-also how well description sentences are suited
-
-
-
-
-
-
-
 
 
 
@@ -384,9 +160,32 @@ electric cars are a big part of the electric car industry .
 
 The Four concert will be broadcast live on Slovenian TV on 23 September at 20 a.m.
 
-
-
-
+🧠 Cluster 0 → igra, skok, točka, tekma, dončić, podaj, dallas, sezona, minuta, dober, met, četrtina, leto, liga, zadnji, igra skok, zmaga, ekipa, trojka, nba
+🧠 Cluster 1 → tekma, gol, minuta, kopitar, los, zmaga, angeles, sezona, los angeles, strel, tretjina, edmonton, točka, kralj, zadnji, liga, končnica, obramba, ekipa, mreža
+🧠 Cluster 2 → niz, igra, turnir, zda, finale, leto, đoković, dvoboj, sinner, rus, dober, jorgić, igralec, olimpijski, zmaga, servis, fra, alcaraz, točka, polfinale
+🧠 Cluster 3 → dirka, etapa, pogačar, leto, mesto, ekipa, zmaga, dober, sezona, kolesar, cilj, roglič, zadnji, sekunda, dan, svetoven, konec, velik, čas, kilometer
+🧠 Cluster 4 → izraelski, gaza, izrael, napad, človek, palestinski, hamas, vojska, država, izraelski vojska, libanon, ubit, pomoč, leto, sila, območje, ameriški, vojna, humanitaren, palestinec
+🧠 Cluster 5 → mesto, tekma, dober, olimpijski, svetoven, leto, finale, sezona, igra, pokal, točka, slovenski, sekunda, svetoven pokal, medalja, meter, prevc, skok, prvenstvo, čas
+🧠 Cluster 6 → trump, predsednik, zda, leto, ameriški, harris, biden, volitev, država, trumpov, zvezen, predsedniški, kandidat, nekdanji, sodišče, donald, donald trump, demokratski, demokrat, soočenje
+🧠 Cluster 7 → minuta, tekma, točka, leto, real, barcelona, žoga, liga, sezona, prvak, gol, klub, strel, manchester, finale, liverpool, zmaga, dober, zadetek, madrid
+🧠 Cluster 8 → minuta, tekma, olimpija, točka, strel, blok, gol, liga, celje, sezona, zmaga, zadnji, ekipa, dober, žoga, maribor, konec, polčas, krka, vrata
+🧠 Cluster 9 → tekma, leto, sezona, klub, liga, ekipa, trener, dober, nov, igralec, reprezentanca, prvenstvo, olimpija, slovenski, prvak, evropski, slovenija, igra, pogodba, velik
+🧠 Cluster 10 → tekma, slovenija, minuta, slovenski, dober, prvenstvo, točka, leto, igra, reprezentanca, skupina, liga, gol, evropski, ekipa, olimpijski, zmaga, zadnji, mesto, igralec
+🧠 Cluster 11 → električen, vozilo, avtomobil, leto, nov, model, velik, podjetje, vožnja, avtomobilski, motor, odstotek, kitajski, slovenija, električen vozilo, evro, evropski, pogon, proizvajalec, znamka
+🧠 Cluster 12 → odstotek, evro, leto, energija, cena, milijon, slovenija, milijon evro, nov, jedrski, država, rast, podjetje, velik, elektrarna, zakon, projekt, družba, visok, podneben
+🧠 Cluster 13 → požar, gasilec, človek, eksplozija, območje, gasilski, objekt, poškodovan, hiša, velik, policija, stavba, ogenj, ura, mesto, škoda, gašenje, leto, dom, uprava
+🧠 Cluster 14 → temperatura, stopinja, sneg, slovenija, leto, dan, padavina, veter, celzij, stopinja celzij, močen, država, velik, poplava, reka, visok, del, območje, ura, voda
+🧠 Cluster 15 → leto, žival, nov, slovenija, velik, kmetijski, država, voda, človek, kmet, evro, hrana, odstotek, območje, ministrstvo, dan, mesto, milijon, vrsta, slovenski
+🧠 Cluster 16 → nesreča, človek, letalo, voznik, leten, vozilo, policist, območje, leto, prometen, prometen nesreča, helikopter, kraj, poškodovan, policija, reševalec, država, potres, policijski, ura
+🧠 Cluster 17 → leto, odstotek, zakon, predlog, vlada, evro, ministrstvo, delo, slovenija, javen, sindikat, plača, nov, podjetje, delavec, deloven, pravica, država, zaposlen, šola
+🧠 Cluster 18 → ruski, ukrajina, ukrajinski, rusija, napad, država, slovenija, leto, predsednik, vojna, evropski, vojaški, zda, zelenski, sila, človek, oblast, ameriški, trump, vojska
+🧠 Cluster 19 → leto, film, smrt, vloga, skupina, kralj, slovenski, dan, delo, družina, velik, igralec, življenje, britanski, čas, človek, svet, nekdanji, star, glasben
+🧠 Cluster 20 → policija, policist, napad, dejanje, moški, človek, leto, policijski, kazniv, kazniv dejanje, preiskava, šola, otrok, osumljenec, leten, voznik, vozilo, ljubljana, mesto, žrtev
+🧠 Cluster 21 → stranka, leto, volitev, vlada, sodišče, predsednik, nov, evropski, država, slovenija, odstotek, kandidat, komisija, policija, minister, poslanec, svet, parlament, državen, zakon
+🧠 Cluster 22 → leto, razstava, muzej, delo, slovenski, nov, umetnost, mesto, del, slovenija, svet, umetnik, velik, galerija, prostor, človek, projekt, kulturen, čas, kultura
+🧠 Cluster 23 → leto, festival, album, koncert, glasba, glasben, pesem, skladba, nov, skupina, zasedba, slovenski, velik, dan, slovenija, oder, dober, svet, človek, mesto
+🧠 Cluster 24 → film, leto, predstava, filmski, festival, nagrada, slovenski, zgodba, dober, gledališče, nov, režiser, serija, vloga, življenje, človek, svet, velik, čas, ženska
+🧠 Cluster 25 → leto, knjiga, roman, nagrada, slovenski, pesem, zgodba, zbirka, življenje, delo, človek, svet, literaren, poezija, čas, pisatelj, jezik, knjižnica, beseda, nov
 
 🧠 HOKEJ Cluster 0 → tekma, gol, minuta, kopitar, los, zmaga, angeles, sezona, los angeles, strel, 
             tretjina, edmonton, točka, kralj, zadnji, liga, končnica, obramba, mreža, podaljšk
