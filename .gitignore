@@ -27,3 +27,7 @@ sbert_umap_25d.npy
 tfidf_clusters.npy
 tfidf_umap_2d.npy
 true_labels.npy
+sbert_clusters_kmeans.npy
+sloberta_clusters_dbscan.npy
+sloberta_embeddings.npy
+sloberta_umap_25d.npy

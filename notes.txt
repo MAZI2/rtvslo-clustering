@@ -17,6 +17,8 @@ D also draw and compare extracted labels
 D lematize?
 D tune tfidf
 D create clusters on embeddings not on umap projections
+
+D On preprocessed tokens extract keywords
 ------
 TODO: NPMI on true_labels
     ✅ What could cause low NPMI on meaningful labels?
@@ -26,35 +28,21 @@ TODO: NPMI on true_labels
     If some labels only have 2–3 articles, the keywords are too sparse → unstable or negative NPMI.
     ✅ Fix:
 
-    Skip small groups:
-    TODO: check
-    if len(group_texts) < 5:
-        continue
-    🌀 2. High lexical variety within URL topics
-    Even if topics like "slovenija/preberite-tudi" are meaningful, the articles may:
+   Even if topics like "slovenija/preberite-tudi" are meaningful, the articles may:
 
     Cover broad subtopics (e.g. politics, labor, society),
     Use varied vocab (diluting co-occurrence),
     Contain common words, reducing informativeness.
     So although URL labels group by editorial category, they may not be lexically tight enough to produce good NPMI.
 
-TODO: NPMI -----------
-NPMI might reflect co-occurrence of non-thematic words (like verbs, connectors).
-Or you may have low overlap between documents because of inconsistent text structure (short leads, etc).
-✅ Fixes:
-
-Use lemmatization (not just tokenization).
-Apply custom Slovene stopword list.
-Lowercase, remove punctuation, etc.
+    NPMI might reflect co-occurrence of non-thematic words (like verbs, connectors).
+    Or you may have low overlap between documents because of inconsistent text structure (short leads, etc).
 
 -------- TODO: should I normalize or to 50D?
 WORKS umap to 50D -> noralize(cosine dist) -> hbdscan 
-compare to
-umap to 2D -> hbdscan
-
 TODO: is there upper bound other than time for clusterin ... should you reduce dims at all?
 
-TODO: should i use for tfidf? embedding-based --- for sbert/tfidf vs true_labels
+TODO: if embedding-based evaluation is >99% what does it tell you
 ✅ Why Use Embedding-Based Evaluation?
 Traditional metrics (e.g., Silhouette, Davies-Bouldin) rely on distances between points and fail when:
 
@@ -74,7 +62,7 @@ Using embeddings allows you to evaluate semantic coherence and separation indepe
 ✅ Alternative: NMI or ARI with Ground Truth Labels
     If you have something like URL-based topics, you can also compute:
 
-TODO: i have ground truth but how should i use embedding similarity for comparing which one is better sbert or tsne
+TODO: How does NPMI eval work currently. I have ground truth but how should i use embedding similarity for comparing which one is better sbert or tsne
 
 ⚖️ Comparison: Word Co-occurrence (PMI/NPMI) vs Embedding Similarity
 Aspect	PMI/NPMI (Co-occurrence)	Embedding-based (SBERT etc.)
@@ -92,6 +80,8 @@ Cons	- Sensitive to corpus size
 - Ignores meaning beyond word co-occurrence	- Opaque (harder to interpret)
 - Can fail for mixed-topic clusters
 Output	Coherence scores per cluster (e.g. NPMI)	Similarity stats per cluster (intra/inter)
+
+TODO: why are npmi keywords almost the same and not better?
 ✅ When to Use Each
 NPMI: For keyword coherence
 Cosine similarity: For semantic tightness in embedding space
@@ -117,18 +107,11 @@ Pros	Simple, fast	Captures topical coherence
 Common artifacts	Words like “dejala”, “leto”, etc.	Fewer generic terms
 Interpretability	Medium	High (shows word relationships)
 Language dependent?	Somewhat	Less so — works on token co-occurrence
-🧠 Best Strategy TODO
-Use Stanza-preprocessed token lists (e.g. NOUN, PROPN, ADJ only)
-For each cluster, treat the collection of docs as a “topic”
-Run CoherenceModel with coherence='c_npmi' to extract top words
-Would you like a full working example that does this per cluster?
 
 
 
-
-
-
-
+{'Embedding': 'SBERT', 'Silhouette': 0.31920457, 'Davies-Bouldin': 1.0093945344303572, 'ARI': 0.2322979492079684, 'NMI': 0.49488931728741375, 'Num Clusters': 26, 'Noise Points': 0, 'Embedding Alignment': 0.9991281, 'Avg NPMI': 0.08708324263406085}
+{'Embedding': 'TFIDF', 'Silhouette': 0.32474416, 'Davies-Bouldin': 1.0185792309972688, 'ARI': 0.17818023641450698, 'NMI': 0.42428634930358, 'Num Clusters': 27, 'Noise Points': 0, 'Embedding Alignment': 0.9994208, 'Avg NPMI': 0.09520921248178979}
 
 
 
@@ -160,204 +143,58 @@ electric cars are a big part of the electric car industry .
 
 The Four concert will be broadcast live on Slovenian TV on 23 September at 20 a.m.
 
-🧠 Cluster 0 → igra, skok, točka, tekma, dončić, podaj, dallas, sezona, minuta, dober, met, četrtina, leto, liga, zadnji, igra skok, zmaga, ekipa, trojka, nba
-🧠 Cluster 1 → tekma, gol, minuta, kopitar, los, zmaga, angeles, sezona, los angeles, strel, tretjina, edmonton, točka, kralj, zadnji, liga, končnica, obramba, ekipa, mreža
-🧠 Cluster 2 → niz, igra, turnir, zda, finale, leto, đoković, dvoboj, sinner, rus, dober, jorgić, igralec, olimpijski, zmaga, servis, fra, alcaraz, točka, polfinale
-🧠 Cluster 3 → dirka, etapa, pogačar, leto, mesto, ekipa, zmaga, dober, sezona, kolesar, cilj, roglič, zadnji, sekunda, dan, svetoven, konec, velik, čas, kilometer
-🧠 Cluster 4 → izraelski, gaza, izrael, napad, človek, palestinski, hamas, vojska, država, izraelski vojska, libanon, ubit, pomoč, leto, sila, območje, ameriški, vojna, humanitaren, palestinec
-🧠 Cluster 5 → mesto, tekma, dober, olimpijski, svetoven, leto, finale, sezona, igra, pokal, točka, slovenski, sekunda, svetoven pokal, medalja, meter, prevc, skok, prvenstvo, čas
-🧠 Cluster 6 → trump, predsednik, zda, leto, ameriški, harris, biden, volitev, država, trumpov, zvezen, predsedniški, kandidat, nekdanji, sodišče, donald, donald trump, demokratski, demokrat, soočenje
-🧠 Cluster 7 → minuta, tekma, točka, leto, real, barcelona, žoga, liga, sezona, prvak, gol, klub, strel, manchester, finale, liverpool, zmaga, dober, zadetek, madrid
-🧠 Cluster 8 → minuta, tekma, olimpija, točka, strel, blok, gol, liga, celje, sezona, zmaga, zadnji, ekipa, dober, žoga, maribor, konec, polčas, krka, vrata
-🧠 Cluster 9 → tekma, leto, sezona, klub, liga, ekipa, trener, dober, nov, igralec, reprezentanca, prvenstvo, olimpija, slovenski, prvak, evropski, slovenija, igra, pogodba, velik
-🧠 Cluster 10 → tekma, slovenija, minuta, slovenski, dober, prvenstvo, točka, leto, igra, reprezentanca, skupina, liga, gol, evropski, ekipa, olimpijski, zmaga, zadnji, mesto, igralec
-🧠 Cluster 11 → električen, vozilo, avtomobil, leto, nov, model, velik, podjetje, vožnja, avtomobilski, motor, odstotek, kitajski, slovenija, električen vozilo, evro, evropski, pogon, proizvajalec, znamka
-🧠 Cluster 12 → odstotek, evro, leto, energija, cena, milijon, slovenija, milijon evro, nov, jedrski, država, rast, podjetje, velik, elektrarna, zakon, projekt, družba, visok, podneben
-🧠 Cluster 13 → požar, gasilec, človek, eksplozija, območje, gasilski, objekt, poškodovan, hiša, velik, policija, stavba, ogenj, ura, mesto, škoda, gašenje, leto, dom, uprava
-🧠 Cluster 14 → temperatura, stopinja, sneg, slovenija, leto, dan, padavina, veter, celzij, stopinja celzij, močen, država, velik, poplava, reka, visok, del, območje, ura, voda
-🧠 Cluster 15 → leto, žival, nov, slovenija, velik, kmetijski, država, voda, človek, kmet, evro, hrana, odstotek, območje, ministrstvo, dan, mesto, milijon, vrsta, slovenski
-🧠 Cluster 16 → nesreča, človek, letalo, voznik, leten, vozilo, policist, območje, leto, prometen, prometen nesreča, helikopter, kraj, poškodovan, policija, reševalec, država, potres, policijski, ura
-🧠 Cluster 17 → leto, odstotek, zakon, predlog, vlada, evro, ministrstvo, delo, slovenija, javen, sindikat, plača, nov, podjetje, delavec, deloven, pravica, država, zaposlen, šola
-🧠 Cluster 18 → ruski, ukrajina, ukrajinski, rusija, napad, država, slovenija, leto, predsednik, vojna, evropski, vojaški, zda, zelenski, sila, človek, oblast, ameriški, trump, vojska
-🧠 Cluster 19 → leto, film, smrt, vloga, skupina, kralj, slovenski, dan, delo, družina, velik, igralec, življenje, britanski, čas, človek, svet, nekdanji, star, glasben
-🧠 Cluster 20 → policija, policist, napad, dejanje, moški, človek, leto, policijski, kazniv, kazniv dejanje, preiskava, šola, otrok, osumljenec, leten, voznik, vozilo, ljubljana, mesto, žrtev
-🧠 Cluster 21 → stranka, leto, volitev, vlada, sodišče, predsednik, nov, evropski, država, slovenija, odstotek, kandidat, komisija, policija, minister, poslanec, svet, parlament, državen, zakon
-🧠 Cluster 22 → leto, razstava, muzej, delo, slovenski, nov, umetnost, mesto, del, slovenija, svet, umetnik, velik, galerija, prostor, človek, projekt, kulturen, čas, kultura
-🧠 Cluster 23 → leto, festival, album, koncert, glasba, glasben, pesem, skladba, nov, skupina, zasedba, slovenski, velik, dan, slovenija, oder, dober, svet, človek, mesto
-🧠 Cluster 24 → film, leto, predstava, filmski, festival, nagrada, slovenski, zgodba, dober, gledališče, nov, režiser, serija, vloga, življenje, človek, svet, velik, čas, ženska
-🧠 Cluster 25 → leto, knjiga, roman, nagrada, slovenski, pesem, zgodba, zbirka, življenje, delo, človek, svet, literaren, poezija, čas, pisatelj, jezik, knjižnica, beseda, nov
-
-🧠 HOKEJ Cluster 0 → tekma, gol, minuta, kopitar, los, zmaga, angeles, sezona, los angeles, strel, 
-            tretjina, edmonton, točka, kralj, zadnji, liga, končnica, obramba, mreža, podaljšk
----- Boston za vodilnimi Rangersi zaostaja samo še točko
----- Daccord prvi, ki je na zimski klasiki ohranil mrežo nedotaknjeno
----- Kingsi prvič letos streljali s praznimi naboji, zmaga Toronta
----- Četrti zaporedni poraz Kraljev, Rdeča krila slavila po loteriji
----- Carolina v zadnji tretjini zabila kar pet golov
-🧠 KOŠARKA Cluster 1 → igra, skok, točka, tekma, dončić, podaj, dallas, sezona, minuta, dober, met, četrtina, leto, 
-                liga, zadnji, igra skok, zmaga, ekipa, trojka, nba
----- Pelikani pokvarili LeBronovo rojstnodnevno slavje
----- Utah se je z izjemno predstavo oddolžil Dallasu za visok poraz
----- Oklahoma City porazil še najboljšo ekipo Vzhoda
----- Najlažje dihajo pri Baltimoru in San Franciscu, na voljo še pet prostih mest
----- Dončić in Irving že do odmora potopila odpisani Portland
-🧠 AMERIKA - VLADA Cluster 2 → trump, predsednik, zda, leto, ameriški, harris, biden, volitev, država, trumpov, predsedniški, 
-            kandidat, zvezen, nekdanji, donald, demokratski, sodišče, donald trump, demokrat, soočenje
----- Vplivni in bogati v strahu pred objavo 180 imen, povezanih z Epsteinom
----- Trump se je pritožil na odločitev o izključitvi iz glasovanja v Mainu
----- Trump s pritožbo na vrhovno sodišče tudi glede prepovedi kandidature v Koloradu
----- Ameriško sodišče razkrilo imena posameznikov v povezavi z Epsteinom
----- Biden ob tretji obletnici vdora v Kapitol ostro nad Trumpa: Odloča se o demokraciji
-🧠 DIRKANJE - TUDI KOLESARJENJE Cluster 3 → dirka, etapa, pogačar, leto, mesto, ekipa, zmaga, dober, kolesar, sezona, roglič, cilj, zadnji, 
-            sekunda, dan, svetoven, konec, velik, čas, kilometer
----- Barbara Jolič: Motivacija sledi akciji
----- Rdeči biki prevzemajo Rogličevo novo ekipo
----- Po puščavi in gorah tudi Simon Marčič in Toni Mulec
----- Prolog za uvod v reli Dakar: Marčič 76., Mulec 96.
----- Marčiča po težavah reševali s helikopterjem
-🧠 TENIS Cluster 4 → niz, igra, turnir, zda, finale, leto, đoković, dvoboj, sinner, rus, dober, jorgić, igralec, zmaga, 
-            fra, servis, olimpijski, alcaraz, točka, polfinale
----- Kvitova na porodniški dopust, Osaka se je z njega vrnila
----- Rafael Nadal
----- Nadal zanesljivo ugnal Thiema po 350 dneh premora
----- De Minaur končal niz 43 zmag Đokovića v Avstraliji 
----- Nadal zapravil tri zaključne žoge in ostal brez polfinala
-🧠 IZRAEL, PALESTINA Cluster 5 → izraelski, gaza, izrael, napad, človek, palestinski, hamas, vojska, država, izraelski vojska, libanon, 
-            ubit, pomoč, leto, sila, območje, ameriški, vojna, humanitaren, palestinec
----- Izrael vse glasneje o selitvi Palestincev iz Gaze. Oblasti skrbi obtožba zaradi genocida.
----- Ameriška letalonosilka Gerald R. Ford zapušča Sredozemlje
----- V Libanonu ubit namestnik vodje Hamasa. Izrael bo na ICJ-ju izpodbijal obtožbe genocida.
----- Claudine Gay po obtožbah antisemitizma in plagiatorstva odstopila kot predsednica Harvarda
----- Ugledne izraelske javne osebnosti obsodile "hujskanje h genocidu"
-🧠 SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE Cluster 6 → mesto, tekma, dober, svetoven, olimpijski, leto, finale, sezona, pokal, točka, sekunda, 
-        svetoven pokal, slovenski, prevc, meter, skok, medalja, velik, čas, prvenstvo
----- Po odstopih Urevc in Ličefa edina slovenska predstavnica ostaja Mandeljc 
----- Chebet v Barceloni postavila nov svetovni rekord, Botolin pa državnega
----- Hrgota: Finalni skok eden najboljših v Laniškovi karieri
----- Nika Prevc s petim mestom v Oberstdorfu zmagovalka turneje dveh večerov
----- Popoln skok Anžeta Laniška v leto 2024
-🧠 NOGOMET Cluster 7 → minuta, tekma, točka, real, barcelona, leto, žoga, liga, sezona, prvak, gol, strel, manchester, 
-        klub, liverpool, finale, zmaga, dober, madrid, zadetek
----- Liverpool se je po trilerju na Anfieldu utrdil na vrhu
----- Manchester United van de Beeka posodil v Frankfurt
----- Rooney že po 83 dneh zapustil klop Birminghama
----- Rüdiger potopil Mallorco, Girona pa Oblakov Atletico
----- PSG osvojil francoski superpokal
-🧠 Cluster 8 → minuta, tekma, olimpija, točka, strel, blok, gol, liga, celje, zmaga, sezona, zadnji, ekipa, dober, 
-            žoga, maribor, konec, polčas, krka, vrata
----- Velika zmaga Olimpije na Madžarskem
----- Jeseničani imajo s točko v Zell am Seeju usodo v zadnjem krogu v svojih rokah
----- Krka v drugem polčasu pometla s tekmecem
----- Izjemni Zajc najprej zrežiral preobrat, nato zabil še hat-trick
----- Zvezda v devetem poskusu ugnala Fenerbahče v Carigradu; Barca porazila Real
-🧠 SLOVENSKI ŠPORTI - TUDI KOŠARKA IN HOKEJ Cluster 9 → tekma, slovenija, leto, slovenski, minuta, dober, igra, liga, prvenstvo, sezona, olimpijski, 
-        reprezentanca, ekipa, točka, klub, evropski, igralec, gol, skupina, mesto
----- "Vseh dobrih stvari je enkrat konec, a sanje o košarki bodo vselej z mano"
----- Pianigiani zapustil Cedevito Olimpijo, na ljubljanski klopi znova Martić
----- Hapoel išče zamenjavo za Džikića, glavni kandidat Golemac
----- Decembra Luka Dončić v slogu MVP-ja lige
----- V ZDA in Kanadi zaživela nova profesionalna ženska liga
-🧠 AVTOMOBILI, LETALA Cluster 10 → električen, vozilo, avtomobil, leto, nov, model, velik, vožnja, avtomobilski, podjetje, motor, 
-        odstotek, kitajski, slovenija, električen vozilo, evro, evropski, pogon, znamka, proizvajalec
----- Kitajska na dobri poti do največjega izvoznika avtomobilov
----- Maserati se s posebnimi izvedenkami poslavlja od osemvaljnikov
----- Avtonomna vožnja dobila turkizno barvo
----- Wizz Air začasno prekinja letalsko povezavo med Ljubljano in londonskim letališčem Luton
----- 50 let Volkswagnovega golfa
-🧠 GOSPODARSTVO Cluster 11 → odstotek, evro, leto, energija, cena, milijon, slovenija, milijon evro, nov, jedrski, država, 
-            zakon, podjetje, projekt, elektrarna, družba, velik, rast, podneben, vlada
----- Podražila se je cestnina za predor Karavanke
----- Kateri ukrepi za blaženje energetske draginje ostajajo v letu 2024?
----- Na Hrvaškem nič več označevanja cen v kunah, le še v evrih
----- Gospodarska aktivnost v območju evra decembra upadla
----- Država se bo zadolžila za 1,5 milijarde evrov
-🧠 GASILSTVO, POŽARI Cluster 12 → požar, gasilec, človek, eksplozija, območje, gasilski, poškodovan, objekt, hiša, policija, velik, 
-            stavba, gašenje, ura, ogenj, mesto, škoda, leto, dom, kraj
----- Požar v podjetju na Ljubnem ob Savinji pogašen, poziv občanom preklican
----- Požar v Podjetju na Ljubnem ob Savinji povzročil za okoli dva milijona škode
----- V Nemčiji požar v bolnišnici terjal življenje, več kot 20 poškodovanih
----- Na Tirolskem z balkonov reševali goste iz gorečega hotela
----- Število žrtev eksplozije tovornjaka cisterne v Liberiji naraslo na 74
-🧠 TURIZEM Cluster 13 → leto, žival, slovenija, nov, velik, odstotek, država, evro, človek, kmetijski, mesto, voda, kmet, dan, 
-            milijon, hrana, slovenski, turist, območje, ministrstvo
----- Turizem v letu 2023 – rekord turistov, boj za ležalnike in zvezdice za Slovenijo
----- Letalska družba ponujala dvakratno silvestrovanje, a je potnike pustila na cedilu
----- Iz Šanghaja izplula prva na Kitajskem izdelana križarka
----- Slovenija med redkimi evropskimi državami, ki praznujejo tudi 2. januar
----- Hans Habe
-🧠 VREME - TUDI TURIZEM Cluster 14 → temperatura, stopinja, sneg, leto, slovenija, dan, padavina, veter, celzij, država, stopinja celzij, močen, velik, poplava, reka, visok, del, območje, ura, voda
----- Na skrajnem severu Evrope v novo leto vstopili pri minus 40 stopinjah Celzija
----- Letos bomo lahko iz Slovenije opazovali komete, konjunkcijo planetov in severni sij
----- Neurje Henk povzroča težave v delih Evrope
----- Močno deževje in poplave v delih Evrope, na severu Evrope obilno sneženje in mraz
----- Kranjskogorski turizem si tudi zaradi Zlate lisice mane roke
-🧠 SLOVENSKA POLITIKA Cluster 15 → ruski, ukrajina, ukrajinski, rusija, napad, država, slovenija, leto, predsednik, evropski, vojna, vojaški, zda, človek, oblast, zelenski, sila, ameriški, vlada, vojska
----- Skupina BRICS odslej z novimi polnopravnimi članicami
----- Prenehala je obstajati separatistična republika Gorski Karabah
----- Slovenija dve leti na stolčku nestalne članice Varnostnega sveta. Fajon: Želimo pustiti svoj pečat.
----- Zelenski obljublja pospešeno izdelavo ukrajinskega orožja, Putin pa napoveduje krepitev napadov
----- Predsednica novoletni obisk namenila starostnikom v Domžalah
-🧠 NESREČE Cluster 16 → nesreča, človek, letalo, voznik, leten, območje, vozilo, policist, leto, prometen, prometen nesreča, helikopter, kraj, poškodovan, reševalec, policija, država, potres, policijski, ura
----- Iz Japonske po potresu poročila o žrtvah pod zrušenimi stavbami
----- Pri Benetkah se je prevrnil avtobus z 79 turisti iz BiH-a
----- Vseh 379 ljudi na potniškem letalu ubežalo ognju, pet članov posadke letala obalne straže umrlo
----- Število smrtnih žrtev letalskih nesreč lani med najmanjšimi v zadnjih desetletjih
----- V občini Bohinj plaz odnesel tri alpiniste, med njimi sta dva lažje poškodovana
-🧠 POMEMBNI LJUDJE Cluster 17 → leto, film, smrt, vloga, skupina, družina, igralec, dan, slovenski, velik, življenje, delo, kralj, čas, britanski, rak, nekdanji, svet, star, glasben
----- Od "žurerskega princa" do novega danskega kralja
----- Poslovila se je Francoise Delbart, ovekovečena na "simbolu srečnega trenutka"
----- Umrl je likovni umetnik Nejč Slapar, ki se je uvrščal v sam vrh geometrijske abstrakcije
----- Kdo je Mary? Po odstopu Margarete II. svet dobil prvo avstralsko kraljico ženo.
----- Hollywood žaluje za igralko Glynis Johns, znano po vlogi mame sufražetke v filmu Mary Poppins
-🧠 ZAKONODAJA - TUDI GOSPODARSTVO Cluster 18 → odstotek, leto, zakon, evro, predlog, vlada, delo, slovenija, javen, sindikat, ministrstvo, podjetje, plača, nov, delavec, deloven, zaposlen, šola, visok, otrok
----- V veljavi podražitve napotitev delavcev
----- Na Hrvaškem sta se ponoči rodili dvojčici, prva v letu 2023, druga v 2024
----- Zakon o dolgotrajni oskrbi za zdaj prinaša nove pravice oskrbovalcem družinskih članov
----- Prvi deček se je rodil v Ljubljani, prva deklica v Mariboru
----- Popravek na delniških trgih, bitcoin prvič po aprilu 2022 nad mejo 45 tisoč
-🧠 SODIŠČE, POLICIJA, KRIMINAL Cluster 19 → policija, leto, policist, napad, sodišče, dejanje, človek, moški, otrok, kazniv, preiskava, kazniv dejanje, policijski, leten, kazen, država, evro, zapor, primer, žrtev
----- Vrhovno sodišče zavrnilo Janševo zahtevo za varstvo zakonitosti v primeru razžalitve novinark
----- Na Hrvaškem pridržali uslužbenca zunanjega ministrstva zaradi suma tihotapljenja ljudi 
----- Žrtev virtualne ugrabitve: kitajskega najstnika našli v gozdovih Utaha
----- Britanska policija preiskuje prvo virtualno posilstvo v metaprostoru
----- V streljanju na šoli v Iowi več ranjenih
-🧠 OBLASTI Cluster 20 → stranka, volitev, vlada, leto, predsednik, evropski, sodišče, odstotek, nov, slovenija, država, kandidat, komisija, zakon, poslanec, minister, svet, ministrstvo, parlament, volilen
----- Izraelsko vrhovno sodišče razveljavilo ključni del pravosodne reforme
----- Glasovanje ponavljajo še na osmih voliščih v Srbiji
----- Po zamenjavi oblasti na Poljskem tudi zamenjava predstavnika na beneškem bienalu
----- V Srbiji po ponovljenem glasovanju na nekaterih voliščih potrdili zmago vladajočega SNS-ja
----- Golob v DZ še ni poslal predloga za kmetijskega ministra. Vojko Adamič naj ne bi bil edini kandidat.
-🧠 ZGODOVINA Cluster 21 → leto, muzej, slika, delo, nov, velik, papež, del, evro, mesto, milijon, razstava, grad, svet, človek, vesoljski, čas, star, stoletje, dražba
----- Papež pri novoletni maši poudaril pomen žensk za mir na svetu
----- Zgornji dom britanskega parlamenta lani kupil za več kot sto tisočakov šampanjca
----- V nemških zbirkah še zmeraj najmanj 17.000 človeških posmrtnih ostankov iz kolonialnega obdobja
----- Italijanski državni svet: Muzej J. Paul Getty lahko obdrži sliko Jacopa Bassana
----- V bližini letališča v Veliki Britaniji izkopali srednjeveško pokopališče z nekaj čepečimi trupli
-🧠 UMETNOST Cluster 22 → razstava, leto, delo, galerija, muzej, umetnost, umetnik, slovenski, fotografija, prostor, del, likoven, nov, projekt, kultura, kulturen, umetniški, svet, ljubljana, slovenija
----- Na razstavi v ZDA, ki razkriva drznost umetnikov vzhodnega bloka, tudi Vipotnik in Godina
----- Za vsakim muzejskim predmetom stoji restavrator z ogromno vedenja in iznajdljivosti
----- Narodna galerija v 2024: zbirka Kroples in secesijsko gibanje v Ukrajini
----- Nevidno in neplačano delo v umetnosti
----- V Univerzitetni knjižnici Maribor o življenju in delu Antonije Štupca
-🧠 GLASBA Cluster 23 → leto, festival, album, koncert, glasba, glasben, pesem, nov, slovenski, skladba, skupina, dan, velik, zasedba, slovenija, mesto, svet, človek, dober, čas
----- "Zasanjane melodije iz čeških gajev, ognjeviti ritmi ruske glasbe in vedre pesmi naše dežele"
----- Bogat program, bogat odziv: oddaja Srečno 2024! poskrbela za nepozaben glasbeni vstop v novo leto
----- Katoliška cerkev zaznamuje svetovni dan miru
----- Novoletni koncert Dunajskih filharmonikov je tudi letos minil s slovensko udeležbo
----- Duh iztekajočih se novoletnih praznikov
-🧠 LITERATURA Cluster 24 → leto, knjiga, roman, nagrada, slovenski, zgodba, pesem, zbirka, življenje, človek, svet, delo, literaren, poezija, čas, knjižnica, jezik, pisatelj, beseda, nov
----- Ob izidu Arheološke topografije Istre je društvo Histria podelilo tudi dvojico lovorik
----- Ustanova Velenjska knjižna fundacija objavila literarna vabila za 23. Lirikonfest
----- Mark Twain
----- Sojenje Rushdiejevemu napadalcu odloženo vsaj do izida pisateljeve knjige spominov
----- 280 naslovnic in 34 let oblikovanja "oken" v filozofske in psihoanalitične knjige
-🧠 FILM Cluster 25 → film, leto, predstava, filmski, festival, nagrada, slovenski, zgodba, dober, gledališče, nov, režiser, serija, vloga, človek, življenje, svet, velik, čas, ženska
----- Vesolje med nami, slovenski mladinski film – ponedeljek, 1. 1., ob 20.05 na TV SLO 1 
----- Skoraj stoletje kasneje Mišek Miki in druga pomembna dela prehajajo v javno last
----- Pregled leta: s kakšnimi glasbenimi poslasticami je postreglo leto 2023?
----- Klub zadovoljnih žensk, ameriški film – torek, 2. 1., ob 20.05 na TV SLO 1
----- Več filmov preteklega Liffa v Cankarjevem domu, tudi v okviru abonmaja Liffe po Liffu
-
+🧠 Cluster 0 KOŠARKA → igra, skok, točka, tekma, dončić, podaj, dallas, sezona, minuta, dober, met, četrtina, leto, liga, zadnji, igra skok, zmaga, ekipa, trojka, nba
+size of cluster: 701
+🧠 Cluster 1 HOKEJ → tekma, gol, minuta, kopitar, los, zmaga, angeles, sezona, los angeles, strel, tretjina, edmonton, točka, kralj, zadnji, liga, končnica, obramba, ekipa, mreža
+size of cluster: 214
+🧠 Cluster 2 TENIS → niz, igra, turnir, zda, finale, leto, đoković, dvoboj, sinner, rus, dober, jorgić, igralec, olimpijski, zmaga, servis, fra, alcaraz, točka, polfinale
+size of cluster: 522
+🧠 Cluster 3 DIRKANJE - TUDI KOLESARJENJE → dirka, etapa, pogačar, leto, mesto, ekipa, zmaga, dober, sezona, kolesar, cilj, roglič, zadnji, sekunda, dan, svetoven, konec, velik, čas, kilometer
+size of cluster: 1150
+🧠 Cluster 4 IZRAEL, PALESTINA→ izraelski, gaza, izrael, napad, človek, palestinski, hamas, vojska, država, izraelski vojska, libanon, ubit, pomoč, leto, sila, območje, ameriški, vojna, humanitaren, palestinec
+size of cluster: 1645
+🧠 Cluster 5 SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE → mesto, tekma, dober, olimpijski, svetoven, leto, finale, sezona, igra, pokal, točka, slovenski, sekunda, svetoven pokal, medalja, meter, prevc, skok, prvenstvo, čas
+size of cluster: 1865
+🧠 Cluster 6 AMERIKA - VLADA → trump, predsednik, zda, leto, ameriški, harris, biden, volitev, država, trumpov, zvezen, predsedniški, kandidat, nekdanji, sodišče, donald, donald trump, demokratski, demokrat, soočenje
+size of cluster: 586
+🧠 Cluster 7 NOGOMET → minuta, tekma, točka, leto, real, barcelona, žoga, liga, sezona, prvak, gol, klub, strel, manchester, finale, liverpool, zmaga, dober, zadetek, madrid
+size of cluster: 720
+🧠 Cluster 8 SLOVENSKI ŠPORT1 → minuta, tekma, olimpija, točka, strel, blok, gol, liga, celje, sezona, zmaga, zadnji, ekipa, dober, žoga, maribor, konec, polčas, krka, vrata
+size of cluster: 1019
+🧠 Cluster 9 SLOVENSKI ŠPORT2 → tekma, leto, sezona, klub, liga, ekipa, trener, dober, nov, igralec, reprezentanca, prvenstvo, olimpija, slovenski, prvak, evropski, slovenija, igra, pogodba, velik
+size of cluster: 699
+🧠 Cluster 10 SLOVENSKI ŠPORT3 → tekma, slovenija, minuta, slovenski, dober, prvenstvo, točka, leto, igra, reprezentanca, skupina, liga, gol, evropski, ekipa, olimpijski, zmaga, zadnji, mesto, igralec
+size of cluster: 1407
+🧠 Cluster 11 AVTOMOBILI, INDUSTRIJA → električen, vozilo, avtomobil, leto, nov, model, velik, podjetje, vožnja, avtomobilski, motor, odstotek, kitajski, slovenija, električen vozilo, evro, evropski, pogon, proizvajalec, znamka
+size of cluster: 546
+🧠 Cluster 12 GOSPODARSTVO → odstotek, evro, leto, energija, cena, milijon, slovenija, milijon evro, nov, jedrski, država, rast, podjetje, velik, elektrarna, zakon, projekt, družba, visok, podneben
+size of cluster: 975
+🧠 Cluster 13 GASILSTVO, POŽARI → požar, gasilec, človek, eksplozija, območje, gasilski, objekt, poškodovan, hiša, velik, policija, stavba, ogenj, ura, mesto, škoda, gašenje, leto, dom, uprava
+size of cluster: 317
+🧠 Cluster 14 VREME - TUDI TURIZEM → temperatura, stopinja, sneg, slovenija, leto, dan, padavina, veter, celzij, stopinja celzij, močen, država, velik, poplava, reka, visok, del, območje, ura, voda
+size of cluster: 546
+🧠 Cluster 15 TURIZEM → leto, žival, nov, slovenija, velik, kmetijski, država, voda, človek, kmet, evro, hrana, odstotek, območje, ministrstvo, dan, mesto, milijon, vrsta, slovenski
+size of cluster: 1112
+🧠 Cluster 16 NESREČE → nesreča, človek, letalo, voznik, leten, vozilo, policist, območje, leto, prometen, prometen nesreča, helikopter, kraj, poškodovan, policija, reševalec, država, potres, policijski, ura
+size of cluster: 939
+🧠 Cluster 17 ZAKONODAJA - TUDI GOSPODARSTVO → leto, odstotek, zakon, predlog, vlada, evro, ministrstvo, delo, slovenija, javen, sindikat, plača, nov, podjetje, delavec, deloven, pravica, država, zaposlen, šola
+size of cluster: 1925
+🧠 Cluster 18 RUSIJA, UKRAJINA → ruski, ukrajina, ukrajinski, rusija, napad, država, slovenija, leto, predsednik, vojna, evropski, vojaški, zda, zelenski, sila, človek, oblast, ameriški, trump, vojska
+size of cluster: 2044
+🧠 Cluster 19 SLAVNI → leto, film, smrt, vloga, skupina, kralj, slovenski, dan, delo, družina, velik, igralec, življenje, britanski, čas, človek, svet, nekdanji, star, glasben
+size of cluster: 548
+🧠 Cluster 20 SODIŠČE, POLICIJA, KRIMINAL → policija, policist, napad, dejanje, moški, človek, leto, policijski, kazniv, kazniv dejanje, preiskava, šola, otrok, osumljenec, leten, voznik, vozilo, ljubljana, mesto, žrtev
+size of cluster: 933
+🧠 Cluster 21 OBLASTI → stranka, leto, volitev, vlada, sodišče, predsednik, nov, evropski, država, slovenija, odstotek, kandidat, komisija, policija, minister, poslanec, svet, parlament, državen, zakon
+size of cluster: 2741
+🧠 Cluster 22 UMETNOST, KULTURA → leto, razstava, muzej, delo, slovenski, nov, umetnost, mesto, del, slovenija, svet, umetnik, velik, galerija, prostor, človek, projekt, kulturen, čas, kultura
+size of cluster: 2587
+🧠 Cluster 23 GLASBA → leto, festival, album, koncert, glasba, glasben, pesem, skladba, nov, skupina, zasedba, slovenski, velik, dan, slovenija, oder, dober, svet, človek, mesto
+size of cluster: 1502
+🧠 Cluster 24 FILM → film, leto, predstava, filmski, festival, nagrada, slovenski, zgodba, dober, gledališče, nov, režiser, serija, vloga, življenje, človek, svet, velik, čas, ženska
+size of cluster: 1384
+🧠 Cluster 25 LITERATURA → leto, knjiga, roman, nagrada, slovenski, pesem, zgodba, zbirka, življenje, delo, človek, svet, literaren, poezija, čas, pisatelj, jezik, knjižnica, beseda, nov
+size of cluster: 866
 
 Initial embedding: Use SBERT embeddings (paraphrase-multilingual-mpnet-base-v2).
 ---
@@ -646,6 +483,10 @@ def extract_coherent_keywords(token_lists, top_n=10):
     return cm.get_coherence_per_topic()
 This is typically used after clustering documents, where each cluster is treated like a "topic".
 
+TODO: SloBERTa
+16 clustrov
+TODO: tf-idf, svd na 15(silihouette), kmeans, t-sne v 2d
+
 ✅ Compared to TF-IDF
 Feature	TF-IDF	PMI/NPMI
 Focus	Individual word frequency	Word pairs and co-occurrence
@@ -778,3 +619,31 @@ The Four concert will be broadcast live on Slovenian TV on 23 September at 20 a.
 23: " GLASBA",
 24: " LITERATURA",
 25: " FILM"}
+
+
+{0: "KOŠARKA",
+1: "HOKEJ",
+2: "TENIS",
+3: "DIRKANJE - TUDI KOLESARJENJE",
+4: "IZRAEL, PALESTINA",
+5: "SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE",
+6: "AMERIKA - VLADA",
+7: "NOGOMET",
+8: "SLOVENSKI ŠPORT1",
+9: "SLOVENSKI ŠPORT2",
+10: "SLOVENSKI ŠPORT3",
+11: "AVTOMOBILI, INDUSTRIJA",
+12: "GOSPODARSTVO",
+13: "GASILSTVO, POŽARI",
+14: "VREME - TUDI TURIZEM",
+15: "TURIZEM",
+16: "NESREČE",
+17: "ZAKONODAJA - TUDI GOSPODARSTVO",
+18: "RUSIJA, UKRAJINA",
+19: "SLAVNI",
+20: "SODIŠČE, POLICIJA, KRIMINAL",
+21: "OBLASTI",
+22: "UMETNOST, KULTURA",
+23: "GLASBA",
+24: "FILM",
+25: "LITERATURA"}
