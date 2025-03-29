@@ -1,67 +1,60 @@
----
-D Interpretability: After clustering, inspect top terms (via TF-IDF within clusters) to qualitatively evaluate if clusters make sense thematically or semantically.
-D Human-in-the-loop check:
-    Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
----------
-1. Compute Embeddings:
-TF-IDF embeddings → Sparse, high-dimensional vectors.
-SBERT embeddings → Dense, semantic vectors.
-2. Project Both Using UMAP:
-TODO: Use identical UMAP parameters for both embeddings (e.g., n_neighbors=15, min_dist=0.1, metric='cosine' for consistency).
-----
-D To achieve explainability comparable to TF-IDF:
-    Use SBERT embeddings to cluster semantically meaningful groups.
-    Then apply TF-IDF or KeyBERT keyword extraction to each cluster independently, gaining TF-IDF-like interpretability at the end.
+TODO: better display for keywords
 
-D On preprocessed tokens extract keywords
-
--------- TODO: should I normalize or to 50D?
-WORKS umap to 50D -> noralize(cosine dist) -> hbdscan 
-TODO: is there upper bound other than time for clusterin ... should you reduce dims at all?
-
-D TODO: tfidf image
-
-
-D NPMI Output	Coherence scores per cluster (e.g. NPMI)	Similarity stats per cluster (intra/inter)
-Tko kt semantic similarity je pac precej visok povsod, ker clustering dela dobro?
-Zato uporabljene tiste tri metrike, predvsem pa silhueta in analiza ter vizualnost 
-
-TODO: why are npmi keywords almost the same and not better?
-OD TU -------
-✅ When to Use Each
-NPMI: For keyword coherence
-Cosine similarity: For semantic tightness in embedding space
-    Together, they give a well-rounded view:
-
-    Do words co-occur?
-    Are texts semantically similar?
-    Do generated cluster labels reflect the content?
-
-TODO: pmi/npmi keyword extraction ------
-Instead of just picking top TF-IDF words, you rank combinations of words that co-occur more than expected. That way, you get:
-
-Thematically consistent words
-Fewer irrelevant or generic words (like “dejala” or “lahko”)
-Words that tend to appear together in the same context
-✅ Example Use: Gensim’s CoherenceModel
-You can do something like:
-
-✅ Compared to TF-IDF
-Feature	TF-IDF	PMI/NPMI
-Focus	Individual word frequency	Word pairs and co-occurrence
-Pros	Simple, fast	Captures topical coherence
-Common artifacts	Words like “dejala”, “leto”, etc.	Fewer generic terms
-Interpretability	Medium	High (shows word relationships)
-Language dependent?	Somewhat	Less so — works on token co-occurrence
-DO TU -------- basically poves da se isto obnasata, ker so semanticno kr tight te clustri in je jasno kere besede occurajo najbl 
-TODO: check ... ce sploh hoces govort o tem
+Close results compare
+{0: " HOKEJ",
+1: " KOŠARKA",
+2: " AMERIKA - VLADA",
+3: " DIRKANJE - TUDI KOLESARJENJE",
+4: " TENIS",
+5: " IZRAEL, PALESTINA",
+6: " SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE",
+7: " NOGOMET",
+8: " SLOVENSKI ŠPORTI - TUDI KOŠARKA IN HOKEJ",
+9: " SLOVENSKI ŠPORTI - TUDI KOŠARKA IN HOKEJ",
+10: " AVTOMOBILI, LETALA",
+11: " GOSPODARSTVO",
+12: " GASILSTVO, POŽARI",
+13: " TURIZEM",
+14: " VREME - TUDI TURIZEM",
+15: " SLOVENSKA POLITIKA",
+16: " NESREČE",
+17: " POMEMBNI LJUDJE",
+18: " ZAKONODAJA - TUDI GOSPODARSTVO",
+19: " SODIŠČE, POLICIJA, KRIMINAL",
+20: " OBLASTI",
+21: " ZGODOVINA",
+22: " UMETNOST",
+23: " GLASBA",
+24: " LITERATURA",
+25: " FILM"}
 
 
-LLMs are not the way, mogoce bolj vezano vendar halucinirajo.
-I would use human interpretation
-... poves da s pomocjo vecih metod za keyword extraction. Raje ne summary LLMs ker tudi tukaj halucinirajo vse živo in če jim
-daš par leadov iz clustra bodo zlo fokusirali na točen event v tem članku ne tematika. Več leadov pa je prezahtevno
-V smislu človeške analize, bi pa tudi katere clustre ročno potem združil če bi dejansko uporabljal te podatke...
+{0: "KOŠARKA",
+1: "HOKEJ",
+2: "TENIS",
+3: "DIRKANJE - TUDI KOLESARJENJE",
+4: "IZRAEL, PALESTINA",
+5: "SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE",
+6: "AMERIKA - VLADA",
+7: "NOGOMET",
+8: "SLOVENSKI ŠPORT1",
+9: "SLOVENSKI ŠPORT2",
+10: "SLOVENSKI ŠPORT3",
+11: "AVTOMOBILI, INDUSTRIJA",
+12: "GOSPODARSTVO",
+13: "GASILSTVO, POŽARI",
+14: "VREME - TUDI TURIZEM",
+15: "TURIZEM",
+16: "NESREČE",
+17: "ZAKONODAJA - TUDI GOSPODARSTVO",
+18: "RUSIJA, UKRAJINA",
+19: "SLAVNI",
+20: "SODIŠČE, POLICIJA, KRIMINAL",
+21: "OBLASTI",
+22: "UMETNOST, KULTURA",
+23: "GLASBA",
+24: "FILM",
+25: "LITERATURA"}
 
 Ukraine has to help Slovenia and Ukraine has to help Russia
 
@@ -136,114 +129,3 @@ size of cluster: 1384
 🧠 Cluster 25 LITERATURA → leto, knjiga, roman, nagrada, slovenski, pesem, zgodba, zbirka, življenje, delo, človek, svet, literaren, poezija, čas, pisatelj, jezik, knjižnica, beseda, nov
 size of cluster: 866
 
-D Human-in-the-loop check:
-Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
-
-1. Compute Embeddings:
-TF-IDF embeddings → Sparse, high-dimensional vectors.
-SBERT embeddings → Dense, semantic vectors.
-
-2. Project Both Using UMAP:
-Use identical UMAP parameters for both embeddings (e.g., n_neighbors=15, min_dist=0.1, metric='cosine' for consistency).
-
-3. Evaluate and Compare:
-Visual inspection: Check which method produces clearer, visually meaningful clusters.
-Cluster evaluation metrics:
-Silhouette Score: Measures how well separated clusters are.
-Davies-Bouldin Index: Evaluates cluster compactness and separation.
-Semantic/interpretability evaluation: Check how easy it is to interpret clusters.
-
-----
-TODO: mapping to some lower dimension... is this really necessary? or just performance
-
-ntic alignment using embeddings, and it can give you a more direct, model-based evaluation of clustering quality — especially when traditional clustering metrics fail (like silhouette score on 2D projections).
-
-✅ Why Use Embedding-Based Evaluation?
-Traditional metrics (e.g., Silhouette, Davies-Bouldin) rely on distances between points and fail when:
-
-Clusters are non-spherical
-Data is high-dimensional
-There's semantic overlap between labels
-Using embeddings allows you to evaluate semantic coherence and separation independently of geometry.
-
-✅ Options for Embedding-Based Evaluation
-1. Intra-cluster vs Inter-cluster Cosine Similarity
-2. Cluster Centroid Cosine Distances
-    How close points are to their centroid (cohesion)
-    How far centroids are from each other (separation)
-✅ Alternative: NMI or ARI with Ground Truth Labels
-    If you have something like URL-based topics, you can also compute:
-
-vse metode similar clustering, choosing based on visualization and perhaps on the last silhouette
-
-kmeans ne bom kazal grafov pr drugih ker so bili slabsi, tudi ce evaluation direkt samo za dbscan recimo
-
-Original DBSCAN for overlap
-
-D DBSCAN vedno naredi okrog 27 clustrov
-    uporabo umap pri embeddingih z berti smo razlozili
-    SloBERTa kmeans evaluation
-        just worse results, but similar display just a bit rotated and slower to compute
-        
-TODO: better display for keywords
-
-Close results compare
-{'Embedding': 'SLOBERTA-DBSCAN', 'Silhouette': 0.31070593, 'Davies-Bouldin': 1.026054296956046, 'ARI': 0.29383417882004975, 'NMI': 0.5639818237269971, 'Num Clusters': 28, 'Noise Points': 0, 'Embedding Alignment': 0.9986762, 'Avg NPMI': 0.09113513693637}
-{'Embedding': 'SBERT-DBSCAN', 'Silhouette': 0.31920457, 'Davies-Bouldin': 1.0093945344303572, 'ARI': 0.2322979492079684, 'NMI': 0.49488931728741375, 'Num Clusters': 26, 'Noise Points': 0, 'Embedding Alignment': 0.9991281, 'Avg NPMI': 0.08708324263406085}
-{'Embedding': 'TFIDF-DBSCAN', 'Silhouette': 0.32474416, 'Davies-Bouldin': 1.0185792309972688, 'ARI': 0.17818023641450698, 'NMI': 0.42428634930358, 'Num Clusters': 27, 'Noise Points': 0, 'Embedding Alignment': 0.9994208, 'Avg NPMI': 0.09520921248178979}
-{'Embedding': 'SBERT-KMEANS', 'Silhouette': 0.3659727, 'Davies-Bouldin': 0.9945940220041651, 'ARI': 0.2323831969718441, 'NMI': 0.49544835436713974, 'Num Clusters': 26, 'Noise Points': 0, 'Embedding Alignment': 0.9991866, 'Avg NPMI': 0.09023254501353344}
-
-{0: " HOKEJ",
-1: " KOŠARKA",
-2: " AMERIKA - VLADA",
-3: " DIRKANJE - TUDI KOLESARJENJE",
-4: " TENIS",
-5: " IZRAEL, PALESTINA",
-6: " SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE",
-7: " NOGOMET",
-8: " SLOVENSKI ŠPORTI - TUDI KOŠARKA IN HOKEJ",
-9: " SLOVENSKI ŠPORTI - TUDI KOŠARKA IN HOKEJ",
-10: " AVTOMOBILI, LETALA",
-11: " GOSPODARSTVO",
-12: " GASILSTVO, POŽARI",
-13: " TURIZEM",
-14: " VREME - TUDI TURIZEM",
-15: " SLOVENSKA POLITIKA",
-16: " NESREČE",
-17: " POMEMBNI LJUDJE",
-18: " ZAKONODAJA - TUDI GOSPODARSTVO",
-19: " SODIŠČE, POLICIJA, KRIMINAL",
-20: " OBLASTI",
-21: " ZGODOVINA",
-22: " UMETNOST",
-23: " GLASBA",
-24: " LITERATURA",
-25: " FILM"}
-
-
-{0: "KOŠARKA",
-1: "HOKEJ",
-2: "TENIS",
-3: "DIRKANJE - TUDI KOLESARJENJE",
-4: "IZRAEL, PALESTINA",
-5: "SMUČARSKI SKOKI - TUDI OLIMPIJSKE DISCIPLINE",
-6: "AMERIKA - VLADA",
-7: "NOGOMET",
-8: "SLOVENSKI ŠPORT1",
-9: "SLOVENSKI ŠPORT2",
-10: "SLOVENSKI ŠPORT3",
-11: "AVTOMOBILI, INDUSTRIJA",
-12: "GOSPODARSTVO",
-13: "GASILSTVO, POŽARI",
-14: "VREME - TUDI TURIZEM",
-15: "TURIZEM",
-16: "NESREČE",
-17: "ZAKONODAJA - TUDI GOSPODARSTVO",
-18: "RUSIJA, UKRAJINA",
-19: "SLAVNI",
-20: "SODIŠČE, POLICIJA, KRIMINAL",
-21: "OBLASTI",
-22: "UMETNOST, KULTURA",
-23: "GLASBA",
-24: "FILM",
-25: "LITERATURA"}
