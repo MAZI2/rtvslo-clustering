@@ -1,57 +1,79 @@
 # Vizualizacija novic rtvslo.si
+## Podani podatki
+Novice so bile gručene na podlagi vsebine iz <b>naslovov</b>, <b>vodnikov (ang. lead)</b> in dejanskih <b>odstavkov</b> z vsebino. \
+\
+Na voljo so bili tudi podatki o temah, kot so te določene na spletni strani MMC. Natančnejše teme so bile izluščene iz URL-jev novic. <b>Teme iz MMC niso bile del gručenja</b>, za voljo evalvacije trenutnih tematskih sklopov pa so bile uporabljene za primerjavo. 
 
-## FROM ARTICLES TO POINTS
+## Vložitev 
+Za vložitev sta se izkazali za najbolj relavavantni dve metodi, ki sta si med seboj precej različni.\
+\
+<b>TF-IDF</b>\
+TODO: check TF-IDF je metoda, ki uprablja frekvence na nivoju besed za oceno njihove pomembnosti v dokumentu. Izhod TF-IDF je 
+redka matrika, ki ima lahko zelo veliko dimenzijo (št. atributov). Ker TF-IDF striktno ločuje različne oblike besed z istim korenom, je bila v ta namen vsebina člankov lematizirana.
+<figure style="margin: 10px;">
+  <img src="tfidf.png" width="200"/>
+  <figcaption>Gručenje s TF-IDF</figcaption>
+</figure>
 
-Which fields were used. Labels were not included, but used as some reference, which does not necesarrily hold weight. Perhaps informatively EXTRACTED KNOWLEDGE
+<b>SBERT</b>\
+Za metodo vložitve SBERT člankov nismo lematizirali, saj deluje na principu konteksta, za kar so različne oblike besed zaželjene. SBERT besedila predstavi s precej manj-dimenzionalnim vektorejm kot TF-IDF. SBERT je sicer računsko zahtevnejši. \
+\
+V nadaljevalju je bil uporabljen SBERT:
+- Boljša potencialna implementacija iskanja
+- SBERT bolj odporen na tuje jezike
+- Domnevno tukaj uspešen zaradi velikega korpusa (semantičnost na nivoju kljičnih besed)
+- Za interpretabilnost lahko uporabimo TF-IDF
 
-### EMBEDDING
+TO SAY(med seboj precej različni... nasprotni ... preverjen tudi različni berti kot je sloberta ampak se izkaže slabše)
 
-TFIDF and SBERT perform best. Comparisons later down
-Kako predstavi TFIDF in kako SBERT ... SBERT zahtevnejši za zračunat
+### Zamnjševanje dimenzionalnosti
+Za učinkovito gručenje moramo vložitve pretvoriti v vektorje z precej manj dimenzijami. Za TF-IDF je to jasno, zaradi velikanskih vložitev, vendar tudi pri SBERT z dobro pretvorbo na manj dimenzij lahko izluščimo pomembnejše atribute (dimenzije) in s tem zmanjšamo šum. \
+Menogo clustering in drugih algoritmov uporablja razdalje med atributnimi zapisi podatkov. V velikih dimenzijah naletimo na "Curse of dimensionality", kar pomeni, da nam razdalje z večanjem dimenzij povejo čedalje manj.\
+\
+Zmanjševanje dimenzij je potekalo na dveh nivojih:
+#### Zmanjševanje na dimenzionalnost primerno za gručenje
+Za gručenje, smo dimenzionalnost vložitve zmanjšali na 25 dimenzij. 
+Za ta postopek se je najbolje izkazal UMAP, predvsem za SBERT:
+- ohranja lokalne stukture
+- ohranja globalne strukture (delno)
+- hiter (vendar počasnejši od pca ali svd)
+- nelinearen
 
-Reduce to 25D Why?? TFIDF really important because of speed  Sparse, high-dimensional vectors
-but also because of noise and important features extraction
-Curse of dimensionality ... distances less meaningful
+Za TF-IDF je bil dober kandidat tudi SVD. Deluje namreč dobro na "sparse" podatkih. SVD ali PCA se nista dobro izkazala na SBERT vložitvah najverjetneje zaradi nelinearnosti, TF-IDF matrike pa so BOW matrike in so linearno precej dobro ločljive (slika Gručenje s TF-IDF).
 
-### DIMENSIONALITY REDUCTION
-
-I was choosing between two popular and promising techniques UMAP and TSNE.
-Umap. TSNE also doesnt really make sense to use for clustering. TODO: why?
-
-Speaking of determinism i would like to say that even umap i used is not necesarrily deterministic. svd or pca on the other hand for dimensionality reduction are deterministic, but did not produce better results than umap, since umap preserves nonlinear relationships. THIS FOR 25DIM
-
-Visualization
-TSNE was not clear enough, increasing preplexity just emphesizes these aggressiveness ... not the goal. TO SAY
-TSNE might be good for inter-cluster analysis TO SAY
-Might be better for analysing inside clusters ... not interested ... i saw someone have success here
-Also better parameters on UMAP. TSNE only perplexity ... which emphasizes everything
+#### Zamnjševanje na 2 dimenziji za prikaz na podatkovni karti
+Tu se kot pojavi še metoda t-SNE, ki je bila ustvarjena za ta namen. t-SNE je nelinearnma metoda, ki se izrazito osredotoča na lokalne strukture, med tem pa zmanjšuje "gužvo" na 2D/3D prikazu podatkov. Zaradi tega lahko ustvari popolnoma umeten prikaz razdalij med gručami, poleg tega pa za voljo gostih, lepih gruč lahko navrže naravno obliko le-teh. \
+Zaradi tega ni smiselna izbira za zmanjševanje dimenzij pred gručenjem. \
 
 <figure style="margin: 10px;">
   <img src="tsne.png" width="200"/>
-  <figcaption>sbert dbscan</figcaption>
+  <figcaption>t-SNE oblike gruč</figcaption>
 </figure>
 
-Picture of tsne
-    Here we see that tsne can just overemphasize the clustering and does not necesarily care about global distances. When perplexity is lower and clusters are not as tight, clusters start to overlap ... SI LAHKO PREDSTAVLJAS SAY
-    Je pa lahko tud cis okej na kksnem tfidf
+Če zmanjšamo *perplexity* parameter, so lahko gruče sicer vseeno dovolj informativno postavljene (kot na sliki Gručenje z TF-IDF). t-SNE je lahko uporaben za strukture znotraj iste gruče, sicer pa so bili rezultati boljši z uporabo UMAP tudi za zmanjševanje na 2 dimenziji.
+TO SAY kjer so med drugim vsaj delno ohranjene globalne strukture. \
+\
+t-SNE in UMAP sta za razliko od metod kot so SVD in PCA v osnovi nedeterministična.
+## Gručenje 
+TODO: Cluster explanations in explanations.txt for this example. Primer na prosojnice samo to
 
+Za najboljši metodi gručenja sta se izkazali metodi DBSCAN in k-means. Obe metodi sta identificirali semantično zelo podobne gruče, je pa bila za končno rešitev izbrana metoda k-means na podlagi primerjave.
 
-TSNE Distances between clusters are not neccesarly preserved, which is good with umap (but umap also pushes them appart sometimes?)
+DBSCAN:
+- potrebno dodatno klasificirati nerazvrščene (želja po vseh podatkih razvrščenih - vizualno)
+- identificira 26 katerih večina je preprosta za interpretavijo. Nekatere pa so precej podobne in zahtevne za ločitev. 
+- determinističen
+- uporablja lokalno gostoto
 
-Cluster explanations in explanations.txt for this example. Primer na prosojnice samo to
-
-## CLUSTERING
-
-### DBSCAN VS KMEANS
-
-Distances ... can normalize to achieve cosine similarity ... DBSCAN does not support cosine out of the box
-but no real difference ...
-
-dbscan i wanted to preserve outliers
-
-DBSCAN produced semantically similar clusters as kmeans, just that with dbscan i had to use knn to classify outliers (my choice). With kmeans, which is also much faster clustering was semantically similar and coherent, getting also the highest scores..., but the main choice was the ability to set number of clusters explicitly. DBSCAN identified 26 clusters, out of which most are easy to interpret, but some are really not easy and too similar. For that kmeans was used. The downside of kmeans is that it is naturally not deterministic, which means that some clusters will fall apart on some restarts and viceversa. However, with testing, all decompositions were semantically correct, so here maybe even some knowledge can be gained like, ... movies, music, literature ... sometimes generalizes into culture.
-
-Dolocit kateri clustri so mal ambiguous in jih je morda kasneje smiselno združiti na roke
+k-means:
+- hitrejši  
+- možnost določitve števila gruč (vendar DBSCAN tu na začetku v veliko pomoč)
+- nedeterminističen (lahko uporabno za odkrivanje znanj - na roke združit)
+- določi globularno lepo oblikovane skupine 
+TO SAY\
+\
+Razdalje:
+- kosinusna boljša, vendar nekatere knjižnice ne podpirajo direktno. S pomočjo normalizacije lahko uporabimo evklidko razdaljo (sicer ni bistvene razlike)
 
 <figure style="margin: 10px;">
   <img src="sbert-dbscan.png" width="200"/>
@@ -70,36 +92,29 @@ Dolocit kateri clustri so mal ambiguous in jih je morda kasneje smiselno združi
   <figcaption>sbert kmeans clustering 2</figcaption>
 </figure>
 
-DBSCAN:
-    Forms clusters based on local density.
-    UMAP might not "pull apart" similar dense areas because they’re connected.
-
-🔵 KMeans:
-    Assigns every point to a cluster (no noise).
-    Enforces globular (spherical) clusters in feature space.
-    Might - Clusters are clean and non-overlapping by design.
-        KMeans uses global centroid distance — UMAP might exaggerate this.
-
-Določitev clusterov:
+Določitev števila skupin:
 
 <figure style="margin: 10px;">
   <img src="cluster_num_evaluation.png" width="200"/>
   <figcaption>sbert kmeans number of clusters</figcaption>
 </figure>
 
-### EVALUATION
+Iz grafa smo predvsem glede na silhueto ugotovili, da ima lokalni maksimum pri 11 kategorijah. (če bi hoteli bili poravnani tudi s trenutnimi kategorijami pa bi izbrali 10 skupin (vpoštevajoč tudi silhueto)). Iz analize skupin iz DBSCAN, bi želeli nekje med 11 in 26 skupin. Za najlažjo interpretacijo in lepši prikaz se je izkazalo najbolje 15-16 skupin (kljub nižji silhueti).
 
-D Interpretability: After clustering, inspect top terms (via TF-IDF within clusters) to qualitatively evaluate if clusters make sense thematically or semantically.
-D Human-in-the-loop check:
-    Show random samples from clusters and verify if similar articles are indeed clustered together. Evaluate the quality of cluster labels or keywords extracted from each embedding.
+### Evalvacija rezultatov metod
+Metode smo evalvirali tudi na podlagi nekaterih numeričnih metod, vseeno pa so se izkazale za ključne pri izbiri <b>interpretabilnost</b> skupin in vizualno <b>jasen in smiselen prikaz</b> po uporabi metode v primerjavi. 
+Interpretabilnost je bila izvedena na podlagi izluščenih ključnih besed skupin in desetih člankov, ki so bili semantično "najbolj" reprezentativni za skupino (kosinusna razdalja). \
+Uporabljene numerične metrike:
+- silhueta (na 25 dim.)
+- Davies-Bouldin score TODO: kaj je to
+- Poravnvnanost vložitve
+- NPMI (koherentnost skupin na nivoju besed. Intra/inter cluster similarity)
+    Uporabno za ektrakcijio besed (Gensim Coherence model)
 
-Gensim Coherence model ... can be used for keyword extraction shown later
- NPMI Output	Coherence scores per cluster (e.g. NPMI)	Similarity stats per cluster (intra/inter)
-Tko kt semantic similarity je pac precej visok povsod, ker clustering dela dobro?
-Zato uporabljene tiste tri metrike, predvsem pa silhueta in analiza ter vizualnost + !!Semantic/interpretability evaluation: Check how easy it is to interpret clusters.
-
-Explain metrics
-Maximum scores
+- ARI, NMI TODO: kaj je to
+\
+Od vseh numeričnih metod je iz nenadzorovanega vidika še najbolj povedna silhueta TODO: why ni nujno. \
+Za primerjavo dobljenih skupin s trenutno obstoječimi skupinami pa (<b>samo kot zanimivost!</b>) lahko uporabimo ARI, NMI Score.
 
 | Metoda vložitve | Silhueta(25D) | Davies-Bouldin | ARI   | NMI   | Poravnanost vložitve | Povprečni NPMI |
 | ---------------- | ------------- | -------------- | ----- | ----- | --------------------- | --------------- |
@@ -108,17 +123,13 @@ Maximum scores
 | TFIDF-DBSCAN     | 0.325         | 1.019          | 0.178 | 0.424 | 0.999                 | 0.095           |
 | SBERT-KMEANS     | 0.366         | 0.995          | 0.232 | 0.495 | 0.999                 | 0.090           |
 
-Semantic/interpretability evaluation: Check how easy it is to interpret clusters.
-
 TODO: move to README:
     koda za ta eval
 
-NPMI omenim zaradi kasnejše uporabe za keywords. Values v tabeli približno iste, ker so precej sorodne poravnanosti
+### Razlaga skupin
+TODO: label the saved clusters
 
-## EXPLANATIONS
-
-### KEYWORD EXTRACTION
-
+Kot najboljša metoda je bila izbrana predstavitev skupin s pomočjo ključnih besed. 
 a plus of TFIDF - getting this while using sbert
 metode
 
