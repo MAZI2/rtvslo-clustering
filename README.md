@@ -5,7 +5,6 @@ Vsebuje naj tudi vse potrebne informacije za zagon rešitve ter tudi, kako bi la
 - ```cached/``` mapa z datotekami, ki vsebujejo vmesne rezultate
 - ```images/``` mapa s slikami
 - ```workspace/``` mapa z datotekami razvojnega okolja (ne predstavlja dela končne oddaje)
-- ```explanations.txt``` datoteka z dodatnimi podatki za vsako SBERT-k-means skupino
 - ```main.py``` datoteka za zagon vizualizacije
 - ```predstavitev.pdf``` pdf datoteka s predstavitvijo rezultatov 
 - ```requirements.txt``` datoteka s potrebnimi knjižnicami 
@@ -20,7 +19,7 @@ Vizualizacijo zaženemo z datoteko `main.py`. Skripta uporablja že izračunane 
 Argumenti:
 - `--no_cache`: ponovno se izračunajo skupine in ključne besede
 
-Primer:
+Primeri:
 ```bash
 python main.py
 python main.py --no_cache
@@ -213,3 +212,4 @@ mmc_labels = [
 ]
 np.save("mmc_labels.npy", mmc_labels)
 ```
+### Dodatne razlage skupin

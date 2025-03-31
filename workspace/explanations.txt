@@ -1,4 +1,3 @@
-Clusters 0: 
 tfidf:  ['izraelski', 'gaza', 'izrael', 'napad', 'človek', 'palestinski', 'hamas', 'vojska', 'država', 'izraelski vojska', 'libanon', 'ubit', 'pomoč', 'sila', 'območje', 'ameriški', 'vojna', 'leto', 'humanitaren', 'palestinec']
 yake:  ['izraelski vojska napad', 'gaza izraelski napad', 'gaza izraelski vojska', 'napad izraelski vojska', 'izraelski napad gaza', 'izraelski vojska gaza', 'gaza ubit človek', 'izraelski sila gaza', 'izraelski vojska izraelski', 'palestinski gibanje hamas', 'izraelski napad ubit', 'gaza izraelski sila', 'človek izraelski vojska', 'napad hamas izrael', 'izrael izraelski vojska', 'prekinitev ogenj gaza', 'izraelski napad izraelski', 'izraelski zračen napad', 'izraelski sila napad', 'ubit človek izraelski']
 keybert:  ['bombardiran', 'bombardiranje', 'protiizraelski', 'izraelski', 'bomben', 'bombnik', 'izraelskost', 'israel', 'genocid', 'palästina', 'proizraelski', 'palestinkam', 'zaradiizraelski', 'netanjahujev', 'priznanjepalestina', 'terorističen', 'propalestinec', 'izraelk', 'genocida', 'izraelv']
@@ -15,7 +14,6 @@ size of cluster: 1493
 ---- ZDA: Tožba Južne Afrike zoper Izrael zaradi očitkov o genocidu kontraproduktivna
 ---- Odgovornost za napad v Iranu prevzela Islamska država
 
-Cluster 1: 
 tfidf:  ['tekma', 'minuta', 'točka', 'leto', 'liga', 'slovenija', 'sezona', 'dober', 'olimpija', 'gol', 'ekipa', 'slovenski', 'prvenstvo', 'zadnji', 'zmaga', 'klub', 'igralec', 'reprezentanca', 'evropski', 'igra']
 yake:  ['tekma liga prvak', 'tekma tekma tekma', 'tekma evropski prvenstvo', 'minuta konec tekma', 'finale liga prvak', 'tekma tekma minuta', 'tekma krog liga', 'evropski prvenstvo nemčija', 'sezona liga prvak', 'liga prvak tekma', 'minuta minuta konec', 'evropski prvenstvo tekma', 'slovenija evropski prvenstvo', 'tekma liga narod', 'konec tekma minuta', 'minuta konec točka', 'minuta tekma točka', 'igra tekma tekma', 'liga liga liga', 'tekma osmina finale']
 keybert:  ['žeželj', 'feliciani', 'felicetti', 'slaviš', 'jakoslava', 'pellegri', 'srečko', 'onnela', 'presrečen', 'čestitek', 'veseljak', 'sinjemodrim', 'lykkegaard', 'podeželje', 'posrečen', 'čestitk', 'slavić', 'benfico', 'hoffenhe', 'srečka']
@@ -32,7 +30,6 @@ size of cluster: 3768
 ---- Rooney že po 83 dneh zapustil klop Birminghama
 ---- Z Zoranom Martićem se je v zmajevo gnezdo vrnil tudi Zoran Dragić
 
-Cluster 2:
 tfidf:  ['policija', 'leto', 'policist', 'sodišče', 'napad', 'dejanje', 'človek', 'moški', 'kazniv', 'preiskava', 'kazniv dejanje', 'policijski', 'kazen', 'otrok', 'država', 'leten', 'zapor', 'primer', 'evro', 'nov']
 yake:  ['storitev kazniv dejanje', 'kazniv dejanje policija', 'policijski uprava ljubljana', 'preiskava kazniv dejanje', 'kazniv dejanje spolen', 'sum kazniv dejanje', 'policijski uprava nov', 'kazniv dejanje zloraba', 'dejanje kazniv dejanje', 'kazniv dejanje umor', 'policija kazniv dejanje', 'kazniv dejanje kazniv', 'uprava nov mesto', 'policija policijski uprava', 'žrtev kazniv dejanje', 'kraj kazniv dejanje', 'kazniv dejanje', 'osumljenec kazniv dejanje', 'generalen policijski uprava', 'sum storitev kazniv']
 keybert:  ['polisario', 'vladislava', 'rusjana', 'sovrstnik', 'hudodelski', 'salisin', 'čakovac', 'melikov', 'jaroslav', 'nasilnež', 'rangsiman', 'vrtčevski', 'kriminologija', 'hudiči', 'karačajev', 'zamakajoč', 'njegošev', 'vladislav', 'zabojnik', 'russa']
@@ -49,7 +46,6 @@ size of cluster: 1857
 ---- Za dolgoletne spolne zlorabe treh hčerk 52-letnik obsojen na 23 let in pol zapora
 ---- Rop pošte v Gameljnah: neznanec zagrozil uslužbenki in iz blagajne vzel nekaj bankovcev
 
-Cluster 3:
 tfidf:  ['leto', 'razstava', 'slovenski', 'muzej', 'delo', 'nov', 'svet', 'mesto', 'umetnost', 'slovenija', 'velik', 'galerija', 'del', 'umetnik', 'dan', 'človek', 'prostor', 'projekt', 'kultura', 'čas']
 yake:  ['evropski prestolnica kultura', 'muzej sodoben umetnost', 'naroden muzej slovenija', 'akademija likoven umetnost', 'kulturen dediščina slovenija', 'muzej nov sodoben', 'slovenski likoven umetnik', 'slovenski kulturen praznik', 'likoven umetnost oblikovanje', 'nov gorica gorica', 'slovenski kulturen prostor', 'kultura nov gorica', 'nov sodoben zgodovina', 'galerija likoven umetnost', 'prestolnica kultura nov', 'likoven umetnost ljubljana', 'razstava sodoben umetnost', 'sodoben zgodovina slovenija', 'nov stalen razstava', 'slovenski kulturen dediščina']
 keybert:  ['miroslava', 'religiološki', 'religiologija', 'religijski', 'religioznost', 'religiozen', 'verovškov', 'religija', 'svečenica', 'verstvo', 'grškokatoliški', 'papeštvo', 'papeški', 'papeža', 'karikisa', 'papeževanje', 'duhovščina', 'pobožen', 'pobožnost', 'churchillov']
@@ -66,7 +62,6 @@ size of cluster: 2578
 ---- Narodna galerija v 2024: zbirka Kroples in secesijsko gibanje v Ukrajini
 ---- Italijanski državni svet: Muzej J. Paul Getty lahko obdrži sliko Jacopa Bassana
 
-Cluster 4:
 tfidf:  ['dirka', 'etapa', 'pogačar', 'mesto', 'leto', 'ekipa', 'zmaga', 'kolesar', 'dober', 'sezona', 'roglič', 'cilj', 'zadnji', 'sekunda', 'dan', 'svetoven', 'konec', 'čas', 'velik', 'vzpon']
 yake:  ['dirka italija dirka', 'dirka francija dirka', 'etapa kolesarski dirka', 'etapa dirka francija', 'zmaga dirka francija', 'zmaga dirka dirka', 'dirka svetoven prvenstvo', 'dirka sezona dirka', 'skupen zmaga dirka', 'etapen zmaga dirka', 'etapa dirka italija', 'dirka svetoven serija', 'konec sezona dirka', 'etapa letošnji dirka', 'letošnji dirka francija', 'zmaga dirka italija', 'zmagovalec etapa dirka', 'dirka dirka francija', 'dirka francija etapa', 'dirka dirka dirka']
 keybert:  ['bik', 'avstrijski', 'avstrijka', 'bikoborec', 'ekipen', 'germani', 'nemka', 'nemce', 'nemca', 'bika', 'valkenburg', 'equipe', 'nemčija', 'equipo', 'braslovče', 'ekipa', 'nemčev', 'hansgroh', 'benussi', 'nemški']
@@ -83,7 +78,6 @@ size of cluster: 1034
 ---- Sproščeni Pogačar veliko testira, se šali in pili gorsko formo
 ---- Razočarani Pogačar analizira: Če Philipsen ne bi imel svetovnega prvaka, bi zmagal Mohorič
 
-Cluster 5:
 tfidf:  ['leto', 'zakon', 'odstotek', 'evro', 'predlog', 'vlada', 'ministrstvo', 'javen', 'delo', 'slovenija', 'sindikat', 'plača', 'nov', 'podjetje', 'deloven', 'delavec', 'milijon', 'šola', 'otrok', 'država']
 yake:  ['predlog novela zakon', 'plača javen sektor', 'sindikat javen sektor', 'ministrstvo javen uprava', 'sistem plača javen', 'evro milijon evro', 'predlog nov zakon', 'plačen sistem javen', 'predlog sprememba zakon', 'vlada predlog zakon', 'vlada sindikat javen', 'milijon evro odstotek', 'delo družina socialen', 'sistem javen sektor', 'ministrstvo delo družina', 'nov plačen sistem', 'nov plačen zakon', 'milijon evro milijon', 'milijon evro ministrstvo', 'milijarda evro odstotek']
 keybert:  ['deloven', 'izplačevanje', 'normativa', 'zaslužkarstvo', 'zakonodajen', 'zakonodaja', 'obdavčenost', 'subvencioniranje', 'laburističen', 'odplačevanje', 'neplačevanje', 'sobodajalstvo', 'davkoplačevalec', 'normativen', 'fiskalen', 'vlada', 'ekonomskoplosloven', 'delodajalski', 'subvencija', 'dohodek']
@@ -100,7 +94,6 @@ size of cluster: 1794
 ---- Najpogostejši novoletni zaobljubi: bolj zdravo življenje in več druženja
 ---- Potrdila o darovanju krvi odslej elektronska
 
-Cluster 6:
 tfidf:  ['leto', 'slovenija', 'velik', 'nov', 'dan', 'država', 'evro', 'voda', 'človek', 'mesto', 'odstotek', 'žival', 'območje', 'temperatura', 'del', 'milijon', 'stopinja', 'občina', 'visok', 'promet']
 yake:  ['temperatura stopinja celzij', 'evropski vesoljski agencija', 'evro milijon evro', 'milijon evro milijon', 'agencija okolje arso', 'vrednost milijon evro', 'uprava varen hrana', 'mednaroden vesoljski postaja', 'milijon evro nov', 'del milijon evro', 'stopinja celzij stopinja', 'agencija varnost promet', 'javen potniški promet', 'slovenija milijon evro', 'milijon evro slovenija', 'zakon zaščita žival', 'hitrost kilometer ura', 'projekt milijon evro', 'ministrstvo naraven vir', 'slovenija evropski vesoljski']
 keybert:  ['turističnoinfoisforski', 'turističnoinformacijski', 'turizem', 'turističen', 'turistica', 'turističnoinfoinforski', 'turistk', 'turist', 'tourist', 'turistka', 'izletniški', 'počitnice', 'resoren', 'obiska', 'obiskovalec', 'obiskovalka', 'izletnik', 'slovenjgraški', 'slovenski', 'obisk']
@@ -117,7 +110,6 @@ size of cluster: 2077
 ---- Smučišča, kolesarske poti, kampi – ugotovljenih več nedovoljenih posegov na zavarovanih območjih
 ---- Ministrstvo pozvalo k spoštovanju gozdnega bontona
 
-Cluster 7:
 tfidf:  ['igra', 'skok', 'točka', 'tekma', 'dončić', 'minuta', 'sezona', 'dallas', 'podaj', 'dober', 'zmaga', 'liga', 'zadnji', 'met', 'leto', 'ekipa', 'četrtina', 'gol', 'igra skok', 'končnica']
 yake:  ['igra skok podaj', 'igra podaj skok', 'točka skok podaj', 'igra prost met', 'točka podaj skok', 'dončić igra skok', 'prost met skok', 'met skok podaj', 'igra dončić igra', 'skok podaj minuta', 'točka met igra', 'met igra točka', 'jokić igra skok', 'tekma točka skok', 'dvojček točka skok', 'dončić igra prost', 'davis igra skok', 'tatum igra skok', 'igra točka skok', 'met podaj skok']
 keybert:  ['hokejisti', 'rangers', 'rangerse', 'hokejski', 'hokejist', 'ekip', 'hokej', 'rangersov', 'hockey', 'rangersi', 'gol', 'golov', 'canucks', 'športnica', 'ekipen', 'ekipa', 'tima', 'sportradar', 'prvenstvo', 'šampionski']
@@ -134,7 +126,6 @@ size of cluster: 911
 ---- Dončič po prvih dveh tednih glasovanja četrti na Zahodu in prvi med branilci
 ---- Četrti zaporedni poraz Kraljev, Rdeča krila slavila po loteriji
 
-Cluster 8:
 tfidf:  ['stranka', 'vlada', 'volitev', 'leto', 'slovenija', 'predsednik', 'država', 'evropski', 'nov', 'sodišče', 'odstotek', 'zakon', 'kandidat', 'svet', 'komisija', 'minister', 'poslanec', 'predsednica', 'parlament', 'političen']
 yake:  ['predsednica evropski komisija', 'predsednik vlada robert', 'volitev evropski parlament', 'stranka evropski volitev', 'predsednik ustaven sodišče', 'vlada predsednik vlada', 'predsednik vlada predsednik', 'državen volilen komisija', 'odločba ustaven sodišče', 'predsednik evropski svet', 'kabinet predsednik vlada', 'zakon ustaven sodišče', 'volitev odstotek glas', 'vodja poslanski skupina', 'odločitev ustaven sodišče', 'vlada robert golob', 'predsednik vlada stranka', 'nov predsednik vlada', 'stranka odstotek glas', 'poslanec evropski parlament']
 keybert:  ['slovenija', 'slovenia', 'slovenijazvezdan', 'slovenica', 'slovenje', 'slovenj', 'slovenščina', 'slovenski', 'hrvatsk', 'slovensko', 'češko', 'češki', 'češka', 'češek', 'litva', 'slovak', 'slovenec', 'slovaška', 'slovaško', 'bratislava']
@@ -151,7 +142,6 @@ size of cluster: 2689
 ---- V Srbiji po ponovljenem glasovanju na nekaterih voliščih potrdili zmago vladajočega SNS-ja
 ---- Golob v DZ še ni poslal predloga za kmetijskega ministra. Vojko Adamič naj ne bi bil edini kandidat.
 
-Cluster 9:
 tfidf:  ['ruski', 'ukrajina', 'ukrajinski', 'napad', 'rusija', 'država', 'predsednik', 'zda', 'vojna', 'zelenski', 'vojaški', 'sila', 'oblast', 'leto', 'trump', 'ameriški', 'vojska', 'evropski', 'raketa', 'človek']
 yake:  ['ruski napad ukrajina', 'ukrajinski predsednik volodimir', 'ruski predsednik vladimir', 'ruski obramben ministrstvo', 'ruski napad ukrajinski', 'vojaški pomoč ukrajina', 'ukrajinski sila ruski', 'ruski sila ukrajinski', 'predsednik volodimir zelenski', 'ruski sila ukrajina', 'ruski invazija ukrajina', 'ukrajinski vojska ruski', 'ukrajina ukrajinski predsednik', 'ruski vojna ukrajina', 'ukrajina ruski sila', 'vojna ukrajina ruski', 'ukrajinski napad ruski', 'ukrajina ruski predsednik', 'napad ruski ozemlje', 'ruski agresija ukrajina']
 keybert:  ['frakcija', 'grupacija', 'članica', 'skupina', 'članski', 'organizacija', 'zunajkoalicijski', 'konzorcij', 'koalicijski', 'skupinski', 'mednarodnopolitičen', 'član', 'koalicija', 'group', 'kolektiv', 'nadvlad', 'kolektiven', 'organizacijski', 'poslanca', 'združenje']
@@ -168,7 +158,6 @@ size of cluster: 1382
 ---- Konflikt v Mjanmaru se čuti čez mejo na Kitajsko
 ---- Srbska vojska predlaga odpravo ukinitve obveznega služenja vojaškega roka
 
-Cluster 10:
 tfidf:  ['trump', 'predsednik', 'zda', 'leto', 'ameriški', 'harris', 'biden', 'volitev', 'država', 'trumpov', 'zvezen', 'predsedniški', 'kandidat', 'nekdanji', 'sodišče', 'donald', 'demokratski', 'demokrat', 'donald trump', 'soočenje']
 yake:  ['predsednik donald trump', 'zda donald trump', 'predsednik zda donald', 'ameriški predsednik donald', 'nekdanji predsednik zda', 'kandidat donald trump', 'predsednik joe biden', 'nekdanji predsednik trump', 'ameriški predsednik joe', 'nekdanji ameriški predsednik', 'trump predsednik zda', 'ameriški predsedniški volitev', 'volitev donald trump', 'trump predsedniški volitev', 'ameriški zvezen država', 'donald trump predsednik', 'republikanec donald trump', 'predsedniški volitev zda', 'trump ameriški predsednik', 'donald trump trump']
 keybert:  ['sokrivec', 'obtoženec', 'osumljenec', 'demonizacija', 'pedofilo', 'pedofilski', 'obdolženec', 'goljufija', 'namigovanjakgresnreknik', 'obtožnica', 'obtoženčev', 'izdajanjenekater', 'ponarejanje', 'šarlatanski', 'govorica', 'dvomljivec', 'priimek', 'zločinec', 'zavajajoč', 'obtoženca']
@@ -185,7 +174,6 @@ size of cluster: 580
 ---- Ameriški kongres nad TikTok: Odrecite se kitajskemu lastniku ali pa bo TikTok v ZDA prepovedan
 ---- Začetek sojenja Trumpu v New Yorku preložili za en mesec
 
-Cluster 11:
 tfidf:  ['požar', 'nesreča', 'človek', 'letalo', 'območje', 'gasilec', 'policist', 'leten', 'leto', 'voznik', 'policija', 'vozilo', 'poškodovan', 'kraj', 'ura', 'helikopter', 'mesto', 'policijski', 'država', 'reševalec']
 yake:  ['francoski tiskoven agencija', 'policijski uprava nov', 'uprava zaščita reševanje', 'tiskoven agencija afp', 'nesreča leten voznik', 'hud prometen nesreča', 'prometen nesreča leten', 'poškodba kraj nesreča', 'policijski uprava ljubljana', 'vzrok požar znan', 'kraj nesreča policist', 'nujen medicinski pomoč', 'število smrten žrtev', 'človek poškodovan človek', 'nesreča policijski uprava', 'kraj prometen nesreča', 'območje policijski uprava', 'nemški tiskoven agencija', 'hud poškodba kraj', 'gorski reševalen služba']
 keybert:  ['cunamij', 'cunami', 'seizmičen', 'japan', 'prefektura', 'fukušima', 'japonsko', 'japonska', 'tokijski', 'japonec', 'tokijčan', 'japonski', 'nevihten', 'katastrofa', 'peloponeza', 'nippon', 'meteorogog', 'pretresenost', 'tornadi', 'okinava']
@@ -202,7 +190,6 @@ size of cluster: 1263
 ---- Požar v podjetju na Ljubnem ob Savinji pogašen, poziv občanom preklican
 ---- Število smrtnih žrtev potresa na Japonskem naraslo na 73
 
-Cluster 12:
 tfidf:  ['mesto', 'tekma', 'olimpijski', 'dober', 'leto', 'svetoven', 'igra', 'finale', 'sezona', 'slovenski', 'točka', 'pokal', 'turnir', 'velik', 'niz', 'sekunda', 'svetoven pokal', 'zmaga', 'medalja', 'čas']
 yake:  ['tekma svetoven pokal', 'olimpijski igra pariz', 'sezona svetoven pokal', 'zmaga svetoven pokal', 'točka svetoven pokal', 'seštevek svetoven pokal', 'svetoven pokal tekma', 'finale finale finale', 'nastop olimpijski igra', 'svetoven pokal mesto', 'olimpijski igra svetoven', 'medalja svetoven prvenstvo', 'tekma svetoven prvenstvo', 'svetoven pokal', 'zlat olimpijski medalja', 'medalja olimpijski igra', 'mesto tekma svetoven', 'svetoven pokal točka', 'finale svetoven pokal', 'mesto svetoven pokal']
 keybert:  ['veleslalomski', 'slovenjgradčanka', 'nordisski', 'nordijski', 'nordhagen', 'veleslalomistko', 'zimskošporten', 'izslovenski', 'ukrajinec', 'veleslalomistka', 'slovenecza', 'lisovska', 'svojomoški', 'slovenec', 'norges', 'amundsenov', 'slalomski', 'slovenci', 'latvija', 'silvestrov']
@@ -219,7 +206,6 @@ size of cluster: 2608
 ---- Nadal zanesljivo ugnal Thiema po 350 dneh premora
 ---- Lanišek najboljši tudi v kvalifikacijah na Bergislu
 
-Cluster 13:
 tfidf:  ['odstotek', 'leto', 'evro', 'električen', 'nov', 'vozilo', 'avtomobil', 'energija', 'cena', 'podjetje', 'velik', 'slovenija', 'rast', 'milijon', 'delnica', 'model', 'visok', 'država', 'družba', 'milijon evro']
 yake:  ['odstotek milijon evro', 'milijon evro odstotek', 'cena električen energija', 'odstotek milijarda evro', 'evro milijon evro', 'milijarda evro odstotek', 'evro evro evro', 'milijon evro milijon', 'odstotek odstotek odstotek', 'proizvodnja električen energija', 'milijon evro čist', 'vrednost milijon evro', 'milijon evro evro', 'obnovljiv vir energija', 'dobiček milijon evro', 'cena evro evro', 'odstotek odstoten točka', 'okolje podnebje energija', 'odstoten točka odstotek', 'nov jedrski elektrarna']
 keybert:  ['šanghaj', 'china', 'kitajska', 'avtoindustrija', 'kitajsko', 'šendžen', 'kitajski', 'multinacionalk', 'multinacionalen', 'multinacionalka', 'tokijski', 'japonsko', 'automobili', 'cars', 'japonska', 'japonec', 'hongkonški', 'multinacionalkam', 'automobiles', 'azijski']
@@ -236,7 +222,6 @@ size of cluster: 1397
 ---- NSi napoveduje referendum o noveli energetskega zakona, če je vlada ne bo spremenila
 ---- S četrtkom dražji bencin, dizel in kurilno olje
 
-Cluster 14:
 tfidf:  ['film', 'leto', 'festival', 'slovenski', 'nagrada', 'pesem', 'nov', 'album', 'glasba', 'predstava', 'glasben', 'filmski', 'koncert', 'človek', 'zgodba', 'svet', 'življenje', 'dober', 'velik', 'čas']
 yake:  ['festival slovenski film', 'slovenski filmski center', 'film slovenski filmski', 'mednaroden filmski festival', 'slovenski film film', 'nagrada življenjski delo', 'film slovenski film', 'festival dokumentaren film', 'radijski igra otrok', 'film festival slovenski', 'slovenski film festival', 'slovenski film', 'film nov film', 'nov slovenski film', 'film', 'film film', 'glaven vloga film', 'evropski filmski nagrada', 'slovenski film slovenski', 'filmski festival film']
 keybert:  ['filharmonijaletos', 'skladateljski', 'ciaffoni', 'kakofonija', 'češčina', 'melodijski', 'soundczech', 'ssimfonik', 'skladateljica', 'fiharmonija', 'skladateljev', 'basistko', 'folkglasbenica', 'melodičen', 'štokavščina', 'slovenščinen', 'simfoničen', 'glasbenoteorsetski', 'muzikološki', 'ukrajinščina']

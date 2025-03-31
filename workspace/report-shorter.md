@@ -120,7 +120,7 @@ Za natančnejši opis in določanja pomena skupine uporabnik lahko lebdi nad gru
   <figcaption style="font-size: 0.9em;">Izpis pri lebdenju nad skupino</figcaption>
 </figure>
 
-Uporabnik semantični pomen gruče izlušči na podlagi ključnih besed. Za več informacij se za vsako skupino lahko pogleda tudi najbolj reprezentativne novice (```explanations.txt```). NPMI je izluščil praktično enake ključne besede kot TF-IDF, zato v končni vizualizaciji ni vključen. \
+Uporabnik semantični pomen gruče izlušči na podlagi ključnih besed. Za več informacij se za vsako skupino lahko pogleda tudi najbolj reprezentativne novice. NPMI je izluščil praktično enake ključne besede kot TF-IDF, zato v končni vizualizaciji ni vključen. \
 \
 Za vsako gručo je podana tudi njena velikost. \
 \
