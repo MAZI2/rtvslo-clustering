@@ -8,8 +8,13 @@ Vsebuje naj tudi vse potrebne informacije za zagon rešitve ter tudi, kako bi la
 - ```explanations.txt``` datoteka z dodatnimi podatki za vsako SBERT-k-means skupino
 - ```main.py``` datoteka za zagon vizualizacije
 - ```predstavitev.pdf``` pdf datoteka s predstavitvijo rezultatov 
+- ```requirements.txt``` datoteka s potrebnimi knjižnicami 
 
-## Zagon vizualizacije
+## Zagon vizualizacije in vzpostavitev okolja
+Vizualizacija je namenjena zagonu v `python 3.12`. Knjižnice, ki so potrebne za zagon namestimo z
+```bash
+pip install -r requirements.txt
+```
 Vizualizacijo zaženemo z datoteko `main.py`. Skripta uporablja že izračunane SBERT vložitve v datoteki `sbert_embeddings.npy` in preprocesirana besedila iz datoteke `preprocessed_combined.jsonl`. Brez podanih argumentov se uporabijo tudi že izračunane množice skupin in ključnih besed za vsako skupino.
 
 Argumenti:
