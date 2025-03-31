@@ -1,3 +1,7 @@
+TODO: move to README:
+    koda za ta eval
+
+
 Close results compare
 {0: " HOKEJ",
 1: " KOŠARKA",
