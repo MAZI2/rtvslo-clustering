@@ -28,11 +28,14 @@ python main.py --no_cache
 ## Generiranje vmesnih rezultatov
 ### SBERT vložitve
 file: ```cached/sbert_embeddings.npy```
-#print("Generating SBERT embeddings...")
-#sbert_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
-#sbert_embeddings = sbert_model.encode(texts, batch_size=64, show_progress_bar=True)
+``` python
+from sentence_transformers import SentenceTransformer
 
-#np.save('sbert_embeddings.npy', sbert_embeddings)
+sbert_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
+sbert_embeddings = sbert_model.encode(texts, batch_size=64, show_progress_bar=True)
+
+np.save('sbert_embeddings.npy', sbert_embeddings)
+```
 
 ### Preprocesiranje besedil
 file: ```cached/preprocessed_combined.jsonl```\
