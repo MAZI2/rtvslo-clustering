@@ -159,7 +159,7 @@ def draw_plot(
         ellipse_y = center[1] + width * np.cos(t) * np.sin(np.radians(angle)) + height * np.sin(t) * np.cos(np.radians(angle))
         return ellipse_x, ellipse_y
 
-    def summarize_keywords(keywords_dict, short=True, max_words=5, size=None, cluster_id=None):
+    def summarize_keywords(keywords_dict, short=True, max_words=3, size=None, cluster_id=None):
         tfidf = keywords_dict.get("tfidf", [])
         tfidf_preview = ", ".join(tfidf[:max_words])
         if short:
@@ -323,22 +323,16 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group()
 
     group.add_argument("--no_cache", action="store_true", help="Disable all caching")
-    group.add_argument("--cached_all", action="store_true", help="Use full cached dataset")
 
     args = parser.parse_args()
 
     # Defaults
-    cached_all = False
     cached = True
 
     if args.no_cache:
-        cached_all = False
-        cached = False
-    elif args.cached_all:
-        cached_all = True
         cached = False
 
-    if not cached_all:
+    if not cached:
         print("downloading necessary stuff...")
         nltk.download('punkt')
         nltk.download('stopwords')
@@ -362,27 +356,13 @@ if __name__ == "__main__":
 
         preprocessed_texts = load_preprocessed("cached/preprocessed_combined.jsonl")
         tokenized_texts = [text.split() for text in preprocessed_texts]
-
-    print("extracting keywords...")
-    if cached_all:
-        keywords_per_cluster = np.load("cached/keywords_per_cluster.npy", allow_pickle=True).item()
-        sbert_clusters = np.load("cached_extra/sbert_clusters.npy")
-        umap_2d = np.load("cached_extra/umap_2d.npy")
-
-    elif cached:
-        keywords_per_cluster = np.load("cached/keywords_per_cluster.npy", allow_pickle=True).item()
-
-        # verify if cluster sequence is the same as the one expected in imported dictionary
-        unique_clusters = np.unique(sbert_clusters[sbert_clusters >= 0])
-        for cluster_label in unique_clusters:
-            cluster_texts = [preprocessed_texts[i] for i in range(len(tokenized_texts)) if sbert_clusters[i] == cluster_label]
-            tfidf_keywords = extract_tfidf_keywords(cluster_texts, list(stop_words))
-
-            if keywords_per_cluster[cluster_label]['tfidf'][:2] == tfidf_keywords[:2]:
-                print("cluster ", cluster_label, " done")
-            else:
-                print("cluster ", cluster_label, " didn't match")
     else:
+        keywords_per_cluster = np.load("cached/keywords_per_cluster.npy", allow_pickle=True).item()
+        sbert_clusters = np.load("cached/sbert_clusters.npy")
+        umap_2d = np.load("cached/umap_2d.npy")
+
+    if not cached:
+        print("extracting keywords...")
         print("downloading keybert...")
         keybert_model = KeyBERT(model='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
         keywords_per_cluster = extract_cluster_keywords(tokenized_texts, sbert_clusters, list(stop_words), keybert_model)

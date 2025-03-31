@@ -3,7 +3,6 @@ Ta datoteka naj opiše strukturo vašega repozitorija.
 Vsebuje naj tudi vse potrebne informacije za zagon rešitve ter tudi, kako bi lahko poustvarili vse vmesne rezultate. Ne pozabite na seznam potrebnih knjižnic.
 ## Struktura repozitorija
 - ```cached/``` mapa z datotekami, ki vsebujejo vmesne rezultate
-- ```cached_extra/``` mapa z datotekami, ki vsebujejo dodatne vmesne rezultate (če poganjamo main.py z argumentom --cached_all)
 - ```images/``` mapa s slikami
 - ```workspace/``` mapa z datotekami razvojnega okolja (ne predstavlja dela končne oddaje)
 - ```explanations.txt``` datoteka z dodatnimi podatki za vsako SBERT-k-means skupino
@@ -11,16 +10,15 @@ Vsebuje naj tudi vse potrebne informacije za zagon rešitve ter tudi, kako bi la
 - ```predstavitev.pdf``` pdf datoteka s predstavitvijo rezultatov 
 
 ## Zagon vizualizacije
-Vizualizacijo zaženemo z datoteko `main.py`. Skripta uporablja že izračunane SBERT vložitve v datoteki `sbert_embeddings.npy` in preprocesirana besedila iz datoteke `preprocessed_combined.jsonl`. Brez podanih argumentov se uporabijo tudi že izračunane množice ključnih besed za vsako skupino.
+Vizualizacijo zaženemo z datoteko `main.py`. Skripta uporablja že izračunane SBERT vložitve v datoteki `sbert_embeddings.npy` in preprocesirana besedila iz datoteke `preprocessed_combined.jsonl`. Brez podanih argumentov se uporabijo tudi že izračunane množice skupin in ključnih besed za vsako skupino.
 
-- `--cached_all`: za vizualizacijo se uporabi že v celoti izračunane skupine in njihove ključne besede.
-- `--no_cache`: ponovno se izračunajo ključne besede za posamezno skupino
+Argumenti:
+- `--no_cache`: ponovno se izračunajo skupine in ključne besede
 
 Primer:
 ```bash
 python main.py
 python main.py --no_cache
-python main.py --cached_all
 ```
 
 ## Generiranje vmesnih rezultatov

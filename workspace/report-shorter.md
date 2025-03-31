@@ -46,7 +46,7 @@ Tu se pojavi še metoda t-SNE, ki je bila ustvarjena prav za ta namen. t-SNE je 
 Zaradi tega ni smiselna izbira za zmanjševanje dimenzij pred gručenjem.
 
 <figure style="margin: 10px;">
-  <img src="images/tsne.png" width="800"/>
+  <img src="../images/tsne.png" width="800"/>
   <figcaption style="font-size: 0.9em;">t-SNE oblike gruč</figcaption>
 </figure>
 
@@ -71,7 +71,7 @@ Za najboljši metodi gručenja sta se izkazali metodi DBSCAN in k-means. Obe met
 - določi globularno lepo oblikovane skupine 
 
 <figure style="margin: 10px;">
-  <img src="images/sbert-dbscan.png" width="800"/>
+  <img src="../images/sbert-dbscan.png" width="800"/>
   <figcaption style="font-size: 0.9em;">DBSCAN</figcaption>
 </figure>
 
@@ -85,7 +85,7 @@ Razdalje:
 <b>Določitev števila skupin:</b>
 
 <figure style="margin: 10px;">
-  <img src="images/cluster_num_evaluation.png" width="800"/>
+  <img src="../images/cluster_num_evaluation.png" width="800"/>
   <figcaption style="font-size: 0.9em;">Graf metrik v odvisnosti od števila skupin k-means</figcaption>
 </figure>
 
@@ -116,7 +116,7 @@ Gruče so označene z indeksom skupine, ki je v legendi opisana s 5 TF-IDF klju�
 Za natančnejši opis in določanja pomena skupine uporabnik lahko lebdi nad gručo, kjer se mu pokažejo ključne besede po več različnih metodah. 
 
 <figure style="margin: 10px;">
-  <img src="images/hover_cluster.png" width="800"/>
+  <img src="../images/hover_cluster.png" width="800"/>
   <figcaption style="font-size: 0.9em;">Izpis pri lebdenju nad skupino</figcaption>
 </figure>
 
@@ -126,7 +126,7 @@ Za vsako gručo je podana tudi njena velikost. \
 \
 Trenutna implementacija je avtomatska, vendar bi v denajski predstavitvi lahko združili katere od skupin ročno. Poleg tega bi se ročno lahko določilo osnutek skupine.
 <figure style="margin: 0px 10px; display: inline-block; ">
-  <img src="images/final.png" width="800"/>
+  <img src="../images/final.png" width="800"/>
   <figcaption style="font-size: 0.9em;">Končna vizualizacija</figcaption>
 </figure>
 
@@ -136,7 +136,7 @@ Uporabnik lahko v vizualizaciji upošteva tudi relativno oddaljenost in prekrivn
 posamezne skupine tudi skriva.
 
 <figure style="margin: 10px; display: inline-block; ">
-  <img src="images/hidden.png" width="800"/>
+  <img src="../images/hidden.png" width="800"/>
   <figcaption style="font-size: 0.9em;">Skrivanje posameznih skupin</figcaption>
 </figure>
 
@@ -178,6 +178,6 @@ Možen način za razlago skupin je tudi ekstrakcija osnutka s pomočjo velikih j
 ~~~
 ### Rezultati gručenja s TF-IDF vložitvami
 <figure style="margin: 10px;">
-  <img src="images/tfidf.png" width="800"/>
+  <img src="../images/tfidf.png" width="800"/>
   <figcaption style="font-size: 0.9em;">Gručenje s TF-IDF</figcaption>
 </figure>
